@@ -26,8 +26,8 @@ namespace Shared
 
         public float Heading;
 
-        public bool isWalking;
-        public bool isRunning;
-        public bool isJumping;
+        public bool IsWalking;
+        public bool IsRunning;
+        public bool IsJumping;
     }
 }

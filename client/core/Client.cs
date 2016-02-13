@@ -21,7 +21,7 @@ namespace ivmp_client_core
         public Client Instance;
         public NetClient NetClient;
 
-        public string name;
+        public string Name;
         public RemotePlayerController RemotePlayerController;
         public RemoteVehicleController RemoteVehicleController;
 
@@ -36,11 +36,11 @@ namespace ivmp_client_core
             KeyDown += new GTA.KeyEventHandler(OnKeyDown);
             Tick += new EventHandler(OnTick);
             PerFrameDrawing += new GraphicsEventHandler(OnFrameRender);
-            name = "Player";
-            NetPeerConfiguration config = new NetPeerConfiguration("ivmp");
-            config.AutoFlushSendQueue = true;
-            config.ConnectionTimeout = 30;
-            NetClient = new NetClient(config);
+            Name = "Player";
+            NetPeerConfiguration Config = new NetPeerConfiguration("ivmp");
+            Config.AutoFlushSendQueue = true;
+            Config.ConnectionTimeout = 30;
+            NetClient = new NetClient(Config);
             NetClient.Start();
             Connect("25.152.94.206", 7777);
         }
@@ -51,9 +51,9 @@ namespace ivmp_client_core
             {
                 Disconnect();
             }
-            NetOutgoingMessage msg = NetClient.CreateMessage();
-            msg.Write(Shared.Settings.NetworkVersion);
-            NetClient.Connect(IP, port, msg);
+            NetOutgoingMessage Msg = NetClient.CreateMessage();
+            Msg.Write(Shared.Settings.NetworkVersion);
+            NetClient.Connect(IP, port, Msg);
         }
 
         public void Disconnect()
@@ -68,14 +68,14 @@ namespace ivmp_client_core
                 return;
             }
 
-            NetIncomingMessage msg;
+            NetIncomingMessage Msg;
 
-            while((msg = NetClient.ReadMessage()) != null)
+            while((Msg = NetClient.ReadMessage()) != null)
             {
-                switch(msg.MessageType)
+                switch(Msg.MessageType)
                 {
                     case NetIncomingMessageType.StatusChanged:
-                        NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
+                        NetConnectionStatus status = (NetConnectionStatus)Msg.ReadByte();
                         switch(status)
                         {
                             case NetConnectionStatus.InitiatedConnect:
@@ -90,18 +90,18 @@ namespace ivmp_client_core
                                 Game.LocalPlayer.Character.BlockPermanentEvents = true;
                                 Game.LocalPlayer.Character.PreventRagdoll = true;
                                 Game.LocalPlayer.Character.WillFlyThroughWindscreen = false;
-                                Ped[] peds = World.GetAllPeds();
-                                foreach(var ped in peds)
+                                Ped[] Peds = World.GetAllPeds();
+                                foreach(var Ped in Peds)
                                 {
-                                    if(ped != Game.LocalPlayer.Character)
+                                    if(Ped != Game.LocalPlayer.Character)
                                     {
-                                        ped.Delete();
+                                        Ped.Delete();
                                     }
                                 }
-                                Vehicle[] vehicles = World.GetAllVehicles();
-                                foreach(var vehicle in vehicles)
+                                Vehicle[] Vehicles = World.GetAllVehicles();
+                                foreach(var Vehicle in Vehicles)
                                 {
-                                    vehicle.Delete();
+                                    Vehicle.Delete();
                                 }
                                 RemotePlayerController = new RemotePlayerController();
                                 RemoteVehicleController = new RemoteVehicleController();
@@ -115,7 +115,7 @@ namespace ivmp_client_core
                         }
                         break;
                     case NetIncomingMessageType.Data:
-                        int MsgType = msg.ReadInt32();
+                        int MsgType = Msg.ReadInt32();
                         switch (MsgType)
                         {
                             case (int)Shared.NetworkMessageType.PlayerConnected:
@@ -124,90 +124,90 @@ namespace ivmp_client_core
                                 }
                             case (int)Shared.NetworkMessageType.PlayerDisconnected:
                                 {
-                                    long ID = msg.ReadInt64();
-                                    RemotePlayer player = RemotePlayerController.FindByID(ID);
-                                    RemotePlayerController.Remove(player);
-                                    player.Destroy();
-                                    player = null;
+                                    long ID = Msg.ReadInt64();
+                                    RemotePlayer Player = RemotePlayerController.FindByID(ID);
+                                    RemotePlayerController.Remove(Player);
+                                    Player.Destroy();
+                                    Player = null;
                                     break;
                                 }
                             case (int)Shared.NetworkMessageType.UpdatePlayer:
                                 {
                                     PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
-                                    PlayerData.ID = msg.ReadInt64();
-                                    PlayerData.Name = msg.ReadString();
-                                    PlayerData.Model = msg.ReadString();
-                                    PlayerData.Health = msg.ReadInt32();
-                                    PlayerData.Armor = msg.ReadInt32();
-                                    PlayerData.Pos_X = msg.ReadFloat();
-                                    PlayerData.Pos_Y = msg.ReadFloat();
-                                    PlayerData.Pos_Z = msg.ReadFloat();
-                                    PlayerData.Heading = msg.ReadFloat();
-                                    PlayerData.isWalking = msg.ReadBoolean();
-                                    PlayerData.isRunning = msg.ReadBoolean();
-                                    PlayerData.isJumping = msg.ReadBoolean();
-                                    RemotePlayer player = RemotePlayerController.FindByID(PlayerData.ID);
-                                    player.Name = PlayerData.Name;
-                                    player.SetHealth(PlayerData.Health);
-                                    player.SetArmor(PlayerData.Armor);
-                                    Vector3 position = new Vector3();
-                                    position.X = PlayerData.Pos_X;
-                                    position.Y = PlayerData.Pos_Y;
-                                    position.Z = PlayerData.Pos_Z - 1.0f;
-                                    player.SetPosition(position);
-                                    player.SetHeading(PlayerData.Heading);
-                                    player.IsWalking = PlayerData.isWalking;
-                                    player.IsRunning = PlayerData.isRunning;
-                                    player.IsJumping = PlayerData.isJumping;
+                                    PlayerData.ID = Msg.ReadInt64();
+                                    PlayerData.Name = Msg.ReadString();
+                                    PlayerData.Model = Msg.ReadString();
+                                    PlayerData.Health = Msg.ReadInt32();
+                                    PlayerData.Armor = Msg.ReadInt32();
+                                    PlayerData.Pos_X = Msg.ReadFloat();
+                                    PlayerData.Pos_Y = Msg.ReadFloat();
+                                    PlayerData.Pos_Z = Msg.ReadFloat();
+                                    PlayerData.Heading = Msg.ReadFloat();
+                                    PlayerData.IsWalking = Msg.ReadBoolean();
+                                    PlayerData.IsRunning = Msg.ReadBoolean();
+                                    PlayerData.IsJumping = Msg.ReadBoolean();
+                                    RemotePlayer Player = RemotePlayerController.FindByID(PlayerData.ID);
+                                    Player.Name = PlayerData.Name;
+                                    Player.SetHealth(PlayerData.Health);
+                                    Player.SetArmor(PlayerData.Armor);
+                                    Vector3 Position = new Vector3();
+                                    Position.X = PlayerData.Pos_X;
+                                    Position.Y = PlayerData.Pos_Y;
+                                    Position.Z = PlayerData.Pos_Z - 1.0f;
+                                    Player.SetPosition(Position);
+                                    Player.SetHeading(PlayerData.Heading);
+                                    Player.IsWalking = PlayerData.IsWalking;
+                                    Player.IsRunning = PlayerData.IsRunning;
+                                    Player.IsJumping = PlayerData.IsJumping;
 
-                                    player.Interpolation_Start = DateTime.Now;
-                                    player.Interpolation_End = DateTime.Now.AddMilliseconds((double)Shared.Settings.TickRate).AddMilliseconds(NetClient.ServerConnection.AverageRoundtripTime / 1000);
-                                    player.Update();
+                                    Player.Interpolation_Start = DateTime.Now;
+                                    Player.Interpolation_End = DateTime.Now.AddMilliseconds((double)Shared.Settings.TickRate).AddMilliseconds(NetClient.ServerConnection.AverageRoundtripTime / 1000);
+                                    Player.Update();
                                     break;
                                 }
                             case (int)Shared.NetworkMessageType.SpawnPlayer:
                                 {
-                                    Vector3 position = new Vector3();
-                                    position.X = msg.ReadFloat();
-                                    position.Y = msg.ReadFloat();
-                                    position.Z = msg.ReadFloat();
-                                    float Heading = msg.ReadFloat();
+                                    Vector3 Position = new Vector3();
+                                    Position.X = Msg.ReadFloat();
+                                    Position.Y = Msg.ReadFloat();
+                                    Position.Z = Msg.ReadFloat();
+                                    float Heading = Msg.ReadFloat();
                                     IsSpawned = true;
-                                    Game.LocalPlayer.Character.Position = position;
+                                    Game.LocalPlayer.Character.Position = Position;
                                     Game.LocalPlayer.Character.Heading = Heading;
                                     break;
                                 }
                             case (int)Shared.NetworkMessageType.FadeScreenIn:
                                 {
-                                    int duration = msg.ReadInt32();
-                                    Game.FadeScreenIn(duration);
+                                    int Duration = Msg.ReadInt32();
+                                    Game.FadeScreenIn(Duration);
                                     break;
                                 }
                             case (int)Shared.NetworkMessageType.FadeScreenOut:
                                 {
-                                    int duration = msg.ReadInt32();
-                                    Game.FadeScreenOut(duration);
+                                    int Duration = Msg.ReadInt32();
+                                    Game.FadeScreenOut(Duration);
                                     break;
                                 }
                             case (int)Shared.NetworkMessageType.UpdateVehicle:
                                 {
                                     VehicleUpdateStruct VehicleData = new VehicleUpdateStruct();
-                                    VehicleData.ID = msg.ReadInt32();
-                                    VehicleData.Model = msg.ReadString();
-                                    VehicleData.Pos_X = msg.ReadFloat();
-                                    VehicleData.Pos_Y = msg.ReadFloat();
-                                    VehicleData.Pos_Z = msg.ReadFloat();
-                                    VehicleData.Rot_X = msg.ReadFloat();
-                                    VehicleData.Rot_Y = msg.ReadFloat();
-                                    VehicleData.Rot_Z = msg.ReadFloat();
+                                    VehicleData.ID = Msg.ReadInt32();
+                                    VehicleData.Model = Msg.ReadString();
+                                    VehicleData.Pos_X = Msg.ReadFloat();
+                                    VehicleData.Pos_Y = Msg.ReadFloat();
+                                    VehicleData.Pos_Z = Msg.ReadFloat();
+                                    VehicleData.Rot_X = Msg.ReadFloat();
+                                    VehicleData.Rot_Y = Msg.ReadFloat();
+                                    VehicleData.Rot_Z = Msg.ReadFloat();
 
                                     RemoteVehicle Vehicle = RemoteVehicleController.FindByID(VehicleData.ID);
                                     Vehicle.Model = VehicleData.Model;
-                                    Vector3 position = new Vector3();
-                                    position.X = VehicleData.Pos_X;
-                                    position.Y = VehicleData.Pos_Y;
-                                    position.Z = VehicleData.Pos_Z;
-                                    Vehicle.Vehicle.Position = position;
+                                    Vector3 Position = new Vector3();
+                                    Position.X = VehicleData.Pos_X;
+                                    Position.Y = VehicleData.Pos_Y;
+                                    Position.Z = VehicleData.Pos_Z;
+                                    Vehicle.Vehicle.Position = Position;
                                     Quaternion rotation = new Quaternion();
                                     rotation.X = VehicleData.Rot_X;
                                     rotation.Y = VehicleData.Rot_Y;
@@ -222,7 +222,7 @@ namespace ivmp_client_core
                         }
                         break;
                     default:
-                        Game.Console.Print("Unhandled message type: " + msg.MessageType);
+                        Game.Console.Print("Unhandled message type: " + Msg.MessageType);
                         break;
                 }
             }
@@ -234,19 +234,19 @@ namespace ivmp_client_core
                 Vector3 PlayerPos = Game.LocalPlayer.Character.Position;
                 Vector3 PlayerRot = Game.LocalPlayer.Character.Direction;
                 float PlayerHeading = Game.LocalPlayer.Character.Heading;
-                PlayerData.Name = name;
+                PlayerData.Name = Name;
                 PlayerData.Health = Game.LocalPlayer.Character.Health;
                 PlayerData.Armor = Game.LocalPlayer.Character.Armor;
                 PlayerData.Pos_X = PlayerPos.X;
                 PlayerData.Pos_Y = PlayerPos.Y;
                 PlayerData.Pos_Z = PlayerPos.Z;
                 PlayerData.Heading = PlayerHeading;
-                PlayerData.isWalking = Game.isGameKeyPressed(GameKey.MoveBackward) ||
+                PlayerData.IsWalking = Game.isGameKeyPressed(GameKey.MoveBackward) ||
                     Game.isGameKeyPressed(GameKey.MoveForward) ||
                     Game.isGameKeyPressed(GameKey.MoveLeft) ||
                     Game.isGameKeyPressed(GameKey.MoveRight);
-                PlayerData.isRunning = Game.isGameKeyPressed(GameKey.Sprint);
-                PlayerData.isJumping = Game.isGameKeyPressed(GameKey.Jump);
+                PlayerData.IsRunning = Game.isGameKeyPressed(GameKey.Sprint);
+                PlayerData.IsJumping = Game.isGameKeyPressed(GameKey.Jump);
                 OutMsg.Write((int)NetworkMessageType.UpdatePlayer);
                 OutMsg.Write(PlayerData.Name);
                 OutMsg.Write(PlayerData.Health);
@@ -255,9 +255,9 @@ namespace ivmp_client_core
                 OutMsg.Write(PlayerData.Pos_Y);
                 OutMsg.Write(PlayerData.Pos_Z);
                 OutMsg.Write(PlayerData.Heading);
-                OutMsg.Write(PlayerData.isWalking);
-                OutMsg.Write(PlayerData.isRunning);
-                OutMsg.Write(PlayerData.isJumping);
+                OutMsg.Write(PlayerData.IsWalking);
+                OutMsg.Write(PlayerData.IsRunning);
+                OutMsg.Write(PlayerData.IsJumping);
                 NetClient.SendMessage(OutMsg, NetDeliveryMethod.UnreliableSequenced);
             }
         }
@@ -275,10 +275,10 @@ namespace ivmp_client_core
         {
             if(Initialized && NetClient.ConnectionStatus == NetConnectionStatus.Connected)
             {
-                List<RemotePlayer> players = RemotePlayerController.Players;
-                foreach(var player in players)
+                List<RemotePlayer> Players = RemotePlayerController.Players;
+                foreach(var Player in Players)
                 {
-                    player.UpdateInterpolation();
+                    Player.UpdateInterpolation();
                 }
             }
         }

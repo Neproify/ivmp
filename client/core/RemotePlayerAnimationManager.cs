@@ -33,38 +33,38 @@ namespace ivmp_client_core
             Initialized = true;
         }
 
-        public void PlayAnimation(Shared.RemotePlayerAnimations animation)
+        public void PlayAnimation(Shared.RemotePlayerAnimations Animation)
         {
             if(!Player.Ped.Exists() || !Initialized)
             {
                 return;
             }
-            if(animation != CurrentAnimation)
+            if(Animation != CurrentAnimation)
             {
-                CurrentAnimation = animation;
-                if(animation == Shared.RemotePlayerAnimations.RunTo && Player.Ped.Position.DistanceTo(Player.GetPosition()) > 1.0f)
+                CurrentAnimation = Animation;
+                if(Animation == Shared.RemotePlayerAnimations.RunTo && Player.Ped.Position.DistanceTo(Player.GetPosition()) > 1.0f)
                 {
                     if (LastRunToCord.DistanceTo(Player.GetPosition()) > 1.0f)
                     {
-                        Vector3 position = Player.GetPosition();
-                        Player.Ped.Task.RunTo(position);
-                        LastRunToCord = position;
+                        Vector3 Position = Player.GetPosition();
+                        Player.Ped.Task.RunTo(Position);
+                        LastRunToCord = Position;
                     }
                     return;
                 }
-                if (animation == Shared.RemotePlayerAnimations.WalkTo && Player.Ped.Position.DistanceTo(Player.GetPosition()) > 1.0f)
+                if (Animation == Shared.RemotePlayerAnimations.WalkTo && Player.Ped.Position.DistanceTo(Player.GetPosition()) > 1.0f)
                 {
                     if (LastWalkToCord.DistanceTo(Player.GetPosition()) > 1.0f)
                     {
-                        Vector3 position = Player.GetPosition();
-                        Player.Ped.Task.GoTo(position);
-                        LastWalkToCord = position;
+                        Vector3 Position = Player.GetPosition();
+                        Player.Ped.Task.GoTo(Position);
+                        LastWalkToCord = Position;
                     }
                     return;
                 }
 
                 Player.Ped.Task.AlwaysKeepTask = true;
-                switch (animation)
+                switch (Animation)
                 {
                     case Shared.RemotePlayerAnimations.Run:
                         {

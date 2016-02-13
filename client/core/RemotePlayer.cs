@@ -138,36 +138,36 @@ namespace ivmp_client_core
 
             if (true)
             {
-                float fProgress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
-                Vector3 startPosition = new Vector3();
-                startPosition.X = Start_Pos_X;
-                startPosition.Y = Start_Pos_Y;
-                startPosition.Z = Start_Pos_Z;
-                Vector3 endPosition = new Vector3();
-                endPosition.X = End_Pos_X;
-                endPosition.Y = End_Pos_Y;
-                endPosition.Z = End_Pos_Z;
+                float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
+                Vector3 StartPosition = new Vector3();
+                StartPosition.X = Start_Pos_X;
+                StartPosition.Y = Start_Pos_Y;
+                StartPosition.Z = Start_Pos_Z;
+                Vector3 EndPosition = new Vector3();
+                EndPosition.X = End_Pos_X;
+                EndPosition.Y = End_Pos_Y;
+                EndPosition.Z = End_Pos_Z;
 
-                if (startPosition.DistanceTo(endPosition) > 5.0f)
+                if (StartPosition.DistanceTo(EndPosition) > 5.0f)
                 {
-                    SetPosition(endPosition, true);
+                    SetPosition(EndPosition, true);
                 }
 
-                Vector3 currentPosition;
-                currentPosition = Vector3.Lerp(startPosition, endPosition, fProgress);
+                Vector3 CurrentPosition;
+                CurrentPosition = Vector3.Lerp(StartPosition, EndPosition, Progress);
 
-                Ped.Position = currentPosition;
+                Ped.Position = CurrentPosition;
             }
             // interpolate heading
             /*ped.Heading = Heading;*/
             if (true)
             {
-                float fProgress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
-                float currentHeading;
-                Vector2 startHeading = new Vector2(Start_Heading, 0);
-                Vector2 endHeading = new Vector2(End_Heading, 0);
-                currentHeading = Vector2.Lerp(startHeading, endHeading, fProgress).X;
-                Ped.Heading = currentHeading;
+                float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
+                float CurrentHeading;
+                Vector2 StartHeading = new Vector2(Start_Heading, 0);
+                Vector2 EndHeading = new Vector2(End_Heading, 0);
+                CurrentHeading = Vector2.Lerp(StartHeading, EndHeading, Progress).X;
+                Ped.Heading = CurrentHeading;
             }
         }
 
