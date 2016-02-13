@@ -21,7 +21,7 @@ namespace ivmp_client_core
         public Client Instance;
         public NetClient NetClient;
 
-        public string Name;
+        public string PlayerName;
         public RemotePlayerController RemotePlayerController;
         public RemoteVehicleController RemoteVehicleController;
 
@@ -36,7 +36,7 @@ namespace ivmp_client_core
             KeyDown += new GTA.KeyEventHandler(OnKeyDown);
             Tick += new EventHandler(OnTick);
             PerFrameDrawing += new GraphicsEventHandler(OnFrameRender);
-            Name = "Player";
+            PlayerName = "Player";
             NetPeerConfiguration Config = new NetPeerConfiguration("ivmp");
             Config.AutoFlushSendQueue = true;
             Config.ConnectionTimeout = 30;
