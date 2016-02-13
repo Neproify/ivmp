@@ -14,42 +14,42 @@ namespace ivmp_server_core
 {
     public class VehicleController
     {
-        List<Vehicle> vehicles;
+        List<Vehicle> Vehicles;
 
         public VehicleController()
         {
-            vehicles = new List<Vehicle>();
+            Vehicles = new List<Vehicle>();
         }
 
-        public void add(Vehicle vehicle)
+        public void Add(Vehicle Vehicle)
         {
-            vehicles.OrderBy(x => x.ID);
-            int freeID = 1;
-            foreach (var veh in vehicles)
+            Vehicles.OrderBy(x => x.ID);
+            int FreeID = 1;
+            foreach (var Veh in Vehicles)
             {
-                if (veh.ID > freeID)
+                if (Veh.ID > FreeID)
                 {
                     break;
                 }
-                freeID = veh.ID + 1;
+                FreeID = Veh.ID + 1;
             }
-            vehicle.ID = freeID;
-            vehicles.Add(vehicle);
+            Vehicle.ID = FreeID;
+            Vehicles.Add(Vehicle);
         }
 
-        public Vehicle getByID(int ID)
+        public Vehicle GetByID(int ID)
         {
-            return vehicles.Find(x => x.ID == ID);
+            return Vehicles.Find(x => x.ID == ID);
         }
 
-        public void remove(Vehicle vehicle)
+        public void Remove(Vehicle Vehicle)
         {
-            vehicles.Remove(vehicle);
+            Vehicles.Remove(Vehicle);
         }
 
-        public List<Vehicle> getAll()
+        public List<Vehicle> GetAll()
         {
-            return vehicles;
+            return Vehicles;
         }
     }
 }

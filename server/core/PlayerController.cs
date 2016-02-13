@@ -14,31 +14,31 @@ namespace ivmp_server_core
 {
     public class PlayerController
     {
-        public List<Player> players;
+        public List<Player> Players;
 
         public PlayerController()
         {
-            players = new List<Player>();
+            Players = new List<Player>();
         }
 
-        public void add(Player player)
+        public void Add(Player Player)
         {
-            players.Add(player);
+            Players.Add(Player);
         }
 
-        public void remove(Player player)
+        public void Remove(Player Player)
         {
-            players.Remove(player);
+            Players.Remove(Player);
         }
 
-        public Player findByID(long ID)
+        public Player FindByID(long ID)
         {
-            return players.Find(player => player.ID == ID);
+            return Players.Find(Player => Player.ID == ID);
         }
 
-        public List<Player> getAll()
+        public List<Player> GetAll()
         {
-            return players;
+            return Players;
         }
     }
 }

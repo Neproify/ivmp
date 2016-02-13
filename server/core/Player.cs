@@ -15,14 +15,14 @@ namespace ivmp_server_core
 {
     public class Player
     {
-        public Server server;
+        public Server Server;
 
         public long ID;
-        public NetConnection netConnection;
+        public NetConnection NetConnection;
 
         public string Name;
 
-        public bool isSpawned;
+        public bool IsSpawned;
 
         public string Model;
         public int Health;
@@ -34,36 +34,36 @@ namespace ivmp_server_core
 
         public float Heading;
 
-        public bool isWalking;
-        public bool isRunning;
-        public bool isJumping;
+        public bool IsWalking;
+        public bool IsRunning;
+        public bool IsJumping;
         
         public void Spawn(float Pos_X, float Pos_Y, float Pos_Z, float Heading)
         {
-            NetOutgoingMessage msg = server.server.CreateMessage();
-            msg.Write((int)Shared.NetworkMessageType.SpawnPlayer);
-            msg.Write(Pos_X);
-            msg.Write(Pos_Y);
-            msg.Write(Pos_Z);
-            msg.Write(Heading);
-            server.server.SendMessage(msg, netConnection, NetDeliveryMethod.ReliableOrdered);
-            isSpawned = true;
+            NetOutgoingMessage Msg = Server.NetServer.CreateMessage();
+            Msg.Write((int)Shared.NetworkMessageType.SpawnPlayer);
+            Msg.Write(Pos_X);
+            Msg.Write(Pos_Y);
+            Msg.Write(Pos_Z);
+            Msg.Write(Heading);
+            Server.NetServer.SendMessage(Msg, NetConnection, NetDeliveryMethod.ReliableOrdered);
+            IsSpawned = true;
         }
 
-        public void FadeScreenIn(int duration)
+        public void FadeScreenIn(int Duration)
         {
-            NetOutgoingMessage msg = server.server.CreateMessage();
-            msg.Write((int)Shared.NetworkMessageType.FadeScreenIn);
-            msg.Write(duration);
-            server.server.SendMessage(msg, netConnection, NetDeliveryMethod.ReliableOrdered);
+            NetOutgoingMessage Msg = Server.NetServer.CreateMessage();
+            Msg.Write((int)Shared.NetworkMessageType.FadeScreenIn);
+            Msg.Write(Duration);
+            Server.NetServer.SendMessage(Msg, NetConnection, NetDeliveryMethod.ReliableOrdered);
         }
 
-        public void FadeScreenOut(int duration)
+        public void FadeScreenOut(int Duration)
         {
-            NetOutgoingMessage msg = server.server.CreateMessage();
-            msg.Write((int)Shared.NetworkMessageType.FadeScreenOut);
-            msg.Write(duration);
-            server.server.SendMessage(msg, netConnection, NetDeliveryMethod.ReliableOrdered);
+            NetOutgoingMessage Msg = Server.NetServer.CreateMessage();
+            Msg.Write((int)Shared.NetworkMessageType.FadeScreenOut);
+            Msg.Write(Duration);
+            Server.NetServer.SendMessage(Msg, NetConnection, NetDeliveryMethod.ReliableOrdered);
         }
     }
 }

@@ -19,97 +19,96 @@ namespace ivmp_server_core
 {
     public class Server
     {
+        public Server Instance;
+        public int Port;
+        public int TickRate;
+        public int MaxPlayers;
 
-        public Server instance;
-        public int port;
-        public int tickRate;
-        public int maxPlayers;
-
-        public NetServer server;
-        public PlayerController playerController;
-        public VehicleController vehicleController;
+        public NetServer NetServer;
+        public PlayerController PlayerController;
+        public VehicleController VehicleController;
 
         public Server()
         {
-            instance = this;
-            port = 7777;
-            tickRate = Shared.Settings.TickRate;
-            maxPlayers = 32;
-            NetPeerConfiguration config = new NetPeerConfiguration("ivmp");
-            config.MaximumConnections = maxPlayers;
-            config.Port = port;
-            config.ConnectionTimeout = 50;
-            config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
-            server = new NetServer(config);
-            server.Start();
-            playerController = new PlayerController();
-            vehicleController = new VehicleController();
+            Instance = this;
+            Port = 7777;
+            TickRate = Shared.Settings.TickRate;
+            MaxPlayers = 32;
+            NetPeerConfiguration Config = new NetPeerConfiguration("ivmp");
+            Config.MaximumConnections = MaxPlayers;
+            Config.Port = Port;
+            Config.ConnectionTimeout = 50;
+            Config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
+            NetServer = new NetServer(Config);
+            NetServer.Start();
+            PlayerController = new PlayerController();
+            VehicleController = new VehicleController();
             Timer tick = new Timer();
             tick.Elapsed += OnTick;
-            tick.Interval = tickRate;
+            tick.Interval = TickRate;
             tick.Enabled = true;
             tick.Start();
-            Console.WriteLine("Started game server on port " + port);
-            Console.WriteLine("Max players: " + maxPlayers);
+            Console.WriteLine("Started game server on Port " + Port);
+            Console.WriteLine("Max Players: " + MaxPlayers);
 
             // test vehicles
             //2783.87f, 426.42f, 5.82f
-            Vehicle vehicle1 = new Vehicle("Infernus", 2785.87f, 426.42f, 5.82f);
-            Vehicle vehicle2 = new Vehicle("Infernus", 2787.87f, 426.42f, 5.82f);
-            Vehicle vehicle3 = new Vehicle("Infernus", 2789.87f, 426.42f, 5.82f);
-            vehicleController.add(vehicle1);
-            vehicleController.add(vehicle2);
-            vehicleController.add(vehicle3);
+            Vehicle Vehicle1 = new Vehicle("Infernus", 2785.87f, 426.42f, 5.82f);
+            Vehicle Vehicle2 = new Vehicle("Infernus", 2787.87f, 426.42f, 5.82f);
+            Vehicle Vehicle3 = new Vehicle("Infernus", 2789.87f, 426.42f, 5.82f);
+            VehicleController.Add(Vehicle1);
+            VehicleController.Add(Vehicle2);
+            VehicleController.Add(Vehicle3);
         }
 
         public void OnTick(object sender, ElapsedEventArgs e)
         {
-            NetIncomingMessage msg;
-            while ((msg = server.ReadMessage()) != null)
+            NetIncomingMessage Msg;
+            while ((Msg = NetServer.ReadMessage()) != null)
             {
-                switch (msg.MessageType)
+                switch (Msg.MessageType)
                 {
                     case NetIncomingMessageType.ConnectionApproval:
-                        int version = msg.ReadInt32();
-                        if(version == Shared.Settings.NetworkVersion)
+                        int Version = Msg.ReadInt32();
+                        if(Version == Shared.Settings.NetworkVersion)
                         {
-                            msg.SenderConnection.Approve();
+                            Msg.SenderConnection.Approve();
                         }
                         else
                         {
-                            msg.SenderConnection.Deny();
+                            Msg.SenderConnection.Deny();
                         }
                         break;
                     case NetIncomingMessageType.StatusChanged:
-                        NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
+                        NetConnectionStatus status = (NetConnectionStatus)Msg.ReadByte();
                         switch (status)
                         {
                             case NetConnectionStatus.Connected:
                                 {
-                                    Console.WriteLine("Client connected. ID: " + msg.SenderConnection.RemoteUniqueIdentifier);
-                                    Player player = new Player();
-                                    player.server = this;
-                                    player.ID = msg.SenderConnection.RemoteUniqueIdentifier;
-                                    player.netConnection = msg.SenderConnection;
-                                    playerController.add(player);
-                                    NetOutgoingMessage OutMsg = server.CreateMessage();
+                                    Console.WriteLine("Client connected. ID: " + Msg.SenderConnection.RemoteUniqueIdentifier);
+                                    Player Player = new Player();
+                                    Player.Server = this;
+                                    Player.ID = Msg.SenderConnection.RemoteUniqueIdentifier;
+                                    Player.NetConnection = Msg.SenderConnection;
+                                    PlayerController.Add(Player);
+                                    NetOutgoingMessage OutMsg = NetServer.CreateMessage();
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerConnected);
-                                    OutMsg.Write(player.ID);
-                                    server.SendToAll(OutMsg, msg.SenderConnection, NetDeliveryMethod.ReliableUnordered, 1);
-                                    player.Spawn(2783.87f, 426.42f, 5.82f, 45.0f);
-                                    player.FadeScreenIn(1000);
+                                    OutMsg.Write(Player.ID);
+                                    NetServer.SendToAll(OutMsg, Msg.SenderConnection, NetDeliveryMethod.ReliableUnordered, 1);
+                                    Player.Spawn(2783.87f, 426.42f, 5.82f, 45.0f);
+                                    Player.FadeScreenIn(1000);
                                     break;
                                 }
                             case NetConnectionStatus.Disconnected:
                                 {
-                                    Console.WriteLine("Client disconnected. ID: " + msg.SenderConnection.RemoteUniqueIdentifier);
-                                    Player player = playerController.findByID(msg.SenderConnection.RemoteUniqueIdentifier);
-                                    playerController.remove(player);
-                                    player = null;
-                                    NetOutgoingMessage OutMsg = server.CreateMessage();
+                                    Console.WriteLine("Client disconnected. ID: " + Msg.SenderConnection.RemoteUniqueIdentifier);
+                                    Player Player = PlayerController.FindByID(Msg.SenderConnection.RemoteUniqueIdentifier);
+                                    PlayerController.Remove(Player);
+                                    Player = null;
+                                    NetOutgoingMessage OutMsg = NetServer.CreateMessage();
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerDisconnected);
-                                    OutMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
-                                    server.SendToAll(OutMsg, msg.SenderConnection, NetDeliveryMethod.ReliableSequenced, 1);
+                                    OutMsg.Write(Msg.SenderConnection.RemoteUniqueIdentifier);
+                                    NetServer.SendToAll(OutMsg, Msg.SenderConnection, NetDeliveryMethod.ReliableSequenced, 1);
                                     break;
                                 }
                         }
@@ -117,42 +116,42 @@ namespace ivmp_server_core
                     case NetIncomingMessageType.WarningMessage:
                         break;
                     case NetIncomingMessageType.Data:
-                        int MsgType = msg.ReadInt32();
+                        int MsgType = Msg.ReadInt32();
                         switch(MsgType)
                         {
                             case (int)Shared.NetworkMessageType.UpdatePlayer:
                                 PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
-                                PlayerData.Name = msg.ReadString();
-                                PlayerData.Health = msg.ReadInt32();
-                                PlayerData.Armor = msg.ReadInt32();
-                                PlayerData.Pos_X = msg.ReadFloat();
-                                PlayerData.Pos_Y = msg.ReadFloat();
-                                PlayerData.Pos_Z = msg.ReadFloat();
-                                PlayerData.Heading = msg.ReadFloat();
-                                PlayerData.isWalking = msg.ReadBoolean();
-                                PlayerData.isRunning = msg.ReadBoolean();
-                                PlayerData.isJumping = msg.ReadBoolean();
-                                Player player = playerController.findByID(msg.SenderConnection.RemoteUniqueIdentifier);
-                                player.Name = PlayerData.Name;
-                                player.Health = PlayerData.Health;
-                                player.Armor = PlayerData.Armor;
-                                player.Pos_X = PlayerData.Pos_X;
-                                player.Pos_Y = PlayerData.Pos_Y;
-                                player.Pos_Z = PlayerData.Pos_Z;
-                                player.Heading = PlayerData.Heading;
-                                player.isWalking = PlayerData.isWalking;
-                                player.isRunning = PlayerData.isRunning;
-                                player.isJumping = PlayerData.isJumping;
+                                PlayerData.Name = Msg.ReadString();
+                                PlayerData.Health = Msg.ReadInt32();
+                                PlayerData.Armor = Msg.ReadInt32();
+                                PlayerData.Pos_X = Msg.ReadFloat();
+                                PlayerData.Pos_Y = Msg.ReadFloat();
+                                PlayerData.Pos_Z = Msg.ReadFloat();
+                                PlayerData.Heading = Msg.ReadFloat();
+                                PlayerData.IsWalking = Msg.ReadBoolean();
+                                PlayerData.IsRunning = Msg.ReadBoolean();
+                                PlayerData.IsJumping = Msg.ReadBoolean();
+                                Player Player = PlayerController.FindByID(Msg.SenderConnection.RemoteUniqueIdentifier);
+                                Player.Name = PlayerData.Name;
+                                Player.Health = PlayerData.Health;
+                                Player.Armor = PlayerData.Armor;
+                                Player.Pos_X = PlayerData.Pos_X;
+                                Player.Pos_Y = PlayerData.Pos_Y;
+                                Player.Pos_Z = PlayerData.Pos_Z;
+                                Player.Heading = PlayerData.Heading;
+                                Player.IsWalking = PlayerData.IsWalking;
+                                Player.IsRunning = PlayerData.IsRunning;
+                                Player.IsJumping = PlayerData.IsJumping;
                                 break;
                             default:
                                 break;
                         }
                         break;
                     default:
-                        Console.WriteLine("Unhandled message type: " + msg.MessageType);
+                        Console.WriteLine("Unhandled message type: " + Msg.MessageType);
                         break;
                 }
-                server.Recycle(msg);
+                NetServer.Recycle(Msg);
             }
 
             UpdateAllPlayers();
@@ -161,75 +160,75 @@ namespace ivmp_server_core
 
         public void UpdateAllPlayers()
         {
-            List<Player> players = playerController.getAll();
-            foreach (var player in players)
+            List<Player> Players = PlayerController.GetAll();
+            foreach (var Player in Players)
             {
-                NetOutgoingMessage msg = server.CreateMessage();
-                msg.Write((int)Shared.NetworkMessageType.UpdatePlayer);
+                NetOutgoingMessage Msg = NetServer.CreateMessage();
+                Msg.Write((int)Shared.NetworkMessageType.UpdatePlayer);
                 PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
-                PlayerData.ID = player.ID;
-                PlayerData.Name = player.Name;
-                PlayerData.Model = player.Model;
-                PlayerData.Health = player.Health;
-                PlayerData.Armor = player.Armor;
-                PlayerData.Pos_X = player.Pos_X;
-                PlayerData.Pos_Y = player.Pos_Y;
-                PlayerData.Pos_Z = player.Pos_Z;
-                PlayerData.Heading = player.Heading;
-                PlayerData.isWalking = player.isWalking;
-                PlayerData.isRunning = player.isRunning;
-                PlayerData.isJumping = player.isJumping;
+                PlayerData.ID = Player.ID;
+                PlayerData.Name = Player.Name;
+                PlayerData.Model = Player.Model;
+                PlayerData.Health = Player.Health;
+                PlayerData.Armor = Player.Armor;
+                PlayerData.Pos_X = Player.Pos_X;
+                PlayerData.Pos_Y = Player.Pos_Y;
+                PlayerData.Pos_Z = Player.Pos_Z;
+                PlayerData.Heading = Player.Heading;
+                PlayerData.IsWalking = Player.IsWalking;
+                PlayerData.IsRunning = Player.IsRunning;
+                PlayerData.IsJumping = Player.IsJumping;
 
-                msg.Write(PlayerData.ID);
-                msg.Write(PlayerData.Name);
-                msg.Write(PlayerData.Model);
-                msg.Write(PlayerData.Health);
-                msg.Write(PlayerData.Armor);
-                msg.Write(PlayerData.Pos_X);
-                msg.Write(PlayerData.Pos_Y);
-                msg.Write(PlayerData.Pos_Z);
-                msg.Write(PlayerData.Heading);
-                msg.Write(PlayerData.isWalking);
-                msg.Write(PlayerData.isRunning);
-                msg.Write(PlayerData.isJumping);
+                Msg.Write(PlayerData.ID);
+                Msg.Write(PlayerData.Name);
+                Msg.Write(PlayerData.Model);
+                Msg.Write(PlayerData.Health);
+                Msg.Write(PlayerData.Armor);
+                Msg.Write(PlayerData.Pos_X);
+                Msg.Write(PlayerData.Pos_Y);
+                Msg.Write(PlayerData.Pos_Z);
+                Msg.Write(PlayerData.Heading);
+                Msg.Write(PlayerData.IsWalking);
+                Msg.Write(PlayerData.IsRunning);
+                Msg.Write(PlayerData.IsJumping);
 
-                server.SendToAll(msg, player.netConnection, NetDeliveryMethod.Unreliable, 1);
+                NetServer.SendToAll(Msg, Player.NetConnection, NetDeliveryMethod.Unreliable, 1);
             }
         }
 
         public void UpdateAllVehicles()
         {
-            List<Vehicle> vehicles = vehicleController.getAll();
-            foreach(var vehicle in vehicles)
+            List<Vehicle> Vehicles = VehicleController.GetAll();
+            foreach(var Vehicle in Vehicles)
             {
-                NetOutgoingMessage msg = server.CreateMessage();
+                NetOutgoingMessage Msg = NetServer.CreateMessage();
                 VehicleUpdateStruct VehicleData = new VehicleUpdateStruct();
-                VehicleData.ID = vehicle.ID;
-                VehicleData.Model = vehicle.Model;
-                VehicleData.Pos_X = vehicle.Pos_X;
-                VehicleData.Pos_Y = vehicle.Pos_Y;
-                VehicleData.Pos_Z = vehicle.Pos_Z;
-                VehicleData.Rot_X = vehicle.Rot_X;
-                VehicleData.Rot_Y = vehicle.Rot_Y;
-                VehicleData.Rot_Z = vehicle.Rot_Z;
+                VehicleData.ID = Vehicle.ID;
+                VehicleData.Model = Vehicle.Model;
+                VehicleData.Pos_X = Vehicle.Pos_X;
+                VehicleData.Pos_Y = Vehicle.Pos_Y;
+                VehicleData.Pos_Z = Vehicle.Pos_Z;
+                VehicleData.Rot_X = Vehicle.Rot_X;
+                VehicleData.Rot_Y = Vehicle.Rot_Y;
+                VehicleData.Rot_Z = Vehicle.Rot_Z;
 
-                msg.Write((int)Shared.NetworkMessageType.UpdateVehicle);
-                msg.Write(VehicleData.ID);
-                msg.Write(VehicleData.Model);
-                msg.Write(VehicleData.Pos_X);
-                msg.Write(VehicleData.Pos_Y);
-                msg.Write(VehicleData.Pos_Z);
-                msg.Write(VehicleData.Rot_X);
-                msg.Write(VehicleData.Rot_Y);
-                msg.Write(VehicleData.Rot_Z);
+                Msg.Write((int)Shared.NetworkMessageType.UpdateVehicle);
+                Msg.Write(VehicleData.ID);
+                Msg.Write(VehicleData.Model);
+                Msg.Write(VehicleData.Pos_X);
+                Msg.Write(VehicleData.Pos_Y);
+                Msg.Write(VehicleData.Pos_Z);
+                Msg.Write(VehicleData.Rot_X);
+                Msg.Write(VehicleData.Rot_Y);
+                Msg.Write(VehicleData.Rot_Z);
 
-                server.SendToAll(msg, NetDeliveryMethod.Unreliable);
+                NetServer.SendToAll(Msg, NetDeliveryMethod.Unreliable);
             }
         }
 
         public void Shutdown()
         {
-            server.Shutdown("Shutdown");
+            NetServer.Shutdown("Shutdown");
         }
     }
 }
