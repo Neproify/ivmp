@@ -118,11 +118,11 @@ namespace ivmp_client_core
                         int MsgType = msg.ReadInt32();
                         switch (MsgType)
                         {
-                            case (int)Shared.NetworkMessageTypes.MessageType.PlayerConnected:
+                            case (int)Shared.NetworkMessageType.PlayerConnected:
                                 {
                                     break;
                                 }
-                            case (int)Shared.NetworkMessageTypes.MessageType.PlayerDisconnected:
+                            case (int)Shared.NetworkMessageType.PlayerDisconnected:
                                 {
                                     long ID = msg.ReadInt64();
                                     RemotePlayer player = remotePlayerController.findByID(ID);
@@ -131,7 +131,7 @@ namespace ivmp_client_core
                                     player = null;
                                     break;
                                 }
-                            case (int)Shared.NetworkMessageTypes.MessageType.UpdatePlayer:
+                            case (int)Shared.NetworkMessageType.UpdatePlayer:
                                 {
                                     PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
                                     PlayerData.ID = msg.ReadInt64();
@@ -165,7 +165,7 @@ namespace ivmp_client_core
                                     player.Update();
                                     break;
                                 }
-                            case (int)Shared.NetworkMessageTypes.MessageType.SpawnPlayer:
+                            case (int)Shared.NetworkMessageType.SpawnPlayer:
                                 {
                                     Vector3 position = new Vector3();
                                     position.X = msg.ReadFloat();
@@ -177,19 +177,19 @@ namespace ivmp_client_core
                                     Game.LocalPlayer.Character.Heading = Heading;
                                     break;
                                 }
-                            case (int)Shared.NetworkMessageTypes.MessageType.FadeScreenIn:
+                            case (int)Shared.NetworkMessageType.FadeScreenIn:
                                 {
                                     int duration = msg.ReadInt32();
                                     Game.FadeScreenIn(duration);
                                     break;
                                 }
-                            case (int)Shared.NetworkMessageTypes.MessageType.FadeScreenOut:
+                            case (int)Shared.NetworkMessageType.FadeScreenOut:
                                 {
                                     int duration = msg.ReadInt32();
                                     Game.FadeScreenOut(duration);
                                     break;
                                 }
-                            case (int)Shared.NetworkMessageTypes.MessageType.UpdateVehicle:
+                            case (int)Shared.NetworkMessageType.UpdateVehicle:
                                 {
                                     VehicleUpdateStruct VehicleData = new VehicleUpdateStruct();
                                     VehicleData.ID = msg.ReadInt32();
@@ -247,7 +247,7 @@ namespace ivmp_client_core
                     Game.isGameKeyPressed(GameKey.MoveRight);
                 PlayerData.isRunning = Game.isGameKeyPressed(GameKey.Sprint);
                 PlayerData.isJumping = Game.isGameKeyPressed(GameKey.Jump);
-                OutMsg.Write((int)NetworkMessageTypes.MessageType.UpdatePlayer);
+                OutMsg.Write((int)NetworkMessageType.UpdatePlayer);
                 OutMsg.Write(PlayerData.Name);
                 OutMsg.Write(PlayerData.Health);
                 OutMsg.Write(PlayerData.Armor);

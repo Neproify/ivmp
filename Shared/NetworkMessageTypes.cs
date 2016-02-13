@@ -10,17 +10,14 @@ using System.Text;
 
 namespace Shared
 {
-    class NetworkMessageTypes
+    public enum NetworkMessageType
     {
-        public enum MessageType
-        {
-            PlayerConnected,
-            PlayerDisconnected,
-            UpdatePlayer,
-            SpawnPlayer,
-            FadeScreenIn,
-            FadeScreenOut,
-            UpdateVehicle
-        }
+        PlayerConnected,
+        PlayerDisconnected,
+        UpdatePlayer,
+        SpawnPlayer,
+        FadeScreenIn,
+        FadeScreenOut,
+        UpdateVehicle
     }
 }

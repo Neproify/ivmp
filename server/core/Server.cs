@@ -93,7 +93,7 @@ namespace ivmp_server_core
                                     player.netConnection = msg.SenderConnection;
                                     playerController.add(player);
                                     NetOutgoingMessage OutMsg = server.CreateMessage();
-                                    OutMsg.Write((int)Shared.NetworkMessageTypes.MessageType.PlayerConnected);
+                                    OutMsg.Write((int)Shared.NetworkMessageType.PlayerConnected);
                                     OutMsg.Write(player.ID);
                                     server.SendToAll(OutMsg, msg.SenderConnection, NetDeliveryMethod.ReliableUnordered, 1);
                                     player.Spawn(2783.87f, 426.42f, 5.82f, 45.0f);
@@ -107,7 +107,7 @@ namespace ivmp_server_core
                                     playerController.remove(player);
                                     player = null;
                                     NetOutgoingMessage OutMsg = server.CreateMessage();
-                                    OutMsg.Write((int)Shared.NetworkMessageTypes.MessageType.PlayerDisconnected);
+                                    OutMsg.Write((int)Shared.NetworkMessageType.PlayerDisconnected);
                                     OutMsg.Write(msg.SenderConnection.RemoteUniqueIdentifier);
                                     server.SendToAll(OutMsg, msg.SenderConnection, NetDeliveryMethod.ReliableSequenced, 1);
                                     break;
@@ -120,7 +120,7 @@ namespace ivmp_server_core
                         int MsgType = msg.ReadInt32();
                         switch(MsgType)
                         {
-                            case (int)Shared.NetworkMessageTypes.MessageType.UpdatePlayer:
+                            case (int)Shared.NetworkMessageType.UpdatePlayer:
                                 PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
                                 PlayerData.Name = msg.ReadString();
                                 PlayerData.Health = msg.ReadInt32();
@@ -165,7 +165,7 @@ namespace ivmp_server_core
             foreach (var player in players)
             {
                 NetOutgoingMessage msg = server.CreateMessage();
-                msg.Write((int)Shared.NetworkMessageTypes.MessageType.UpdatePlayer);
+                msg.Write((int)Shared.NetworkMessageType.UpdatePlayer);
                 PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
                 PlayerData.ID = player.ID;
                 PlayerData.Name = player.Name;
@@ -213,7 +213,7 @@ namespace ivmp_server_core
                 VehicleData.Rot_Y = vehicle.Rot_Y;
                 VehicleData.Rot_Z = vehicle.Rot_Z;
 
-                msg.Write((int)Shared.NetworkMessageTypes.MessageType.UpdateVehicle);
+                msg.Write((int)Shared.NetworkMessageType.UpdateVehicle);
                 msg.Write(VehicleData.ID);
                 msg.Write(VehicleData.Model);
                 msg.Write(VehicleData.Pos_X);

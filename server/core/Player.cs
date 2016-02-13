@@ -41,7 +41,7 @@ namespace ivmp_server_core
         public void Spawn(float Pos_X, float Pos_Y, float Pos_Z, float Heading)
         {
             NetOutgoingMessage msg = server.server.CreateMessage();
-            msg.Write((int)Shared.NetworkMessageTypes.MessageType.SpawnPlayer);
+            msg.Write((int)Shared.NetworkMessageType.SpawnPlayer);
             msg.Write(Pos_X);
             msg.Write(Pos_Y);
             msg.Write(Pos_Z);
@@ -53,7 +53,7 @@ namespace ivmp_server_core
         public void FadeScreenIn(int duration)
         {
             NetOutgoingMessage msg = server.server.CreateMessage();
-            msg.Write((int)Shared.NetworkMessageTypes.MessageType.FadeScreenIn);
+            msg.Write((int)Shared.NetworkMessageType.FadeScreenIn);
             msg.Write(duration);
             server.server.SendMessage(msg, netConnection, NetDeliveryMethod.ReliableOrdered);
         }
@@ -61,7 +61,7 @@ namespace ivmp_server_core
         public void FadeScreenOut(int duration)
         {
             NetOutgoingMessage msg = server.server.CreateMessage();
-            msg.Write((int)Shared.NetworkMessageTypes.MessageType.FadeScreenOut);
+            msg.Write((int)Shared.NetworkMessageType.FadeScreenOut);
             msg.Write(duration);
             server.server.SendMessage(msg, netConnection, NetDeliveryMethod.ReliableOrdered);
         }
