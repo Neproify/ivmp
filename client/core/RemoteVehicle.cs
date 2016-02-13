@@ -15,7 +15,7 @@ namespace ivmp_client_core
 {
     public class RemoteVehicle
     {
-        public Vehicle vehicle;
+        public Vehicle Vehicle;
 
         public int ID;
         public string Model;
@@ -31,7 +31,7 @@ namespace ivmp_client_core
         public RemoteVehicle(string Model)
         {
             this.Model = Model;
-            vehicle = World.CreateVehicle(Model, Vector3.Zero);
+            Vehicle = World.CreateVehicle(Model, Vector3.Zero);
         }
     }
 }

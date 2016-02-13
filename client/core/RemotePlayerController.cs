@@ -14,40 +14,40 @@ namespace ivmp_client_core
 {
     public class RemotePlayerController
     {
-        public List<RemotePlayer> players;
+        public List<RemotePlayer> Players;
 
         public RemotePlayerController()
         {
-            players = new List<RemotePlayer>();
+            Players = new List<RemotePlayer>();
         }
 
-        public void add(RemotePlayer player)
+        public void Add(RemotePlayer Player)
         {
-            players.Add(player);
+            Players.Add(Player);
         }
 
-        public void remove(RemotePlayer player)
+        public void Remove(RemotePlayer Player)
         {
-            players.Remove(player);
+            Players.Remove(Player);
         }
 
-        public RemotePlayer findByID(long ID)
+        public RemotePlayer FindByID(long ID)
         {
-            RemotePlayer player;
-            if(!players.Any(x => x.ID == ID))
+            RemotePlayer Player;
+            if(!Players.Any(x => x.ID == ID))
             {
-                player = new RemotePlayer();
-                player.ID = ID;
-                add(player);
-                return player;
+                Player = new RemotePlayer();
+                Player.ID = ID;
+                Add(Player);
+                return Player;
             }
-            player = players.Find(x => x.ID == ID);
-            return player;
+            Player = Players.Find(x => x.ID == ID);
+            return Player;
         }
 
         public void UpdateAll()
         {
-            players.ForEach(x => x.Update());
+            Players.ForEach(x => x.Update());
         }
     }
 }

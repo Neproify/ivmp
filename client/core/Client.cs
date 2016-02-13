@@ -18,20 +18,20 @@ namespace ivmp_client_core
 {
     public class Client : Script
     {
-        public Client instance;
-        public NetClient client;
+        public Client Instance;
+        public NetClient NetClient;
 
         public string name;
-        public RemotePlayerController remotePlayerController;
-        public RemoteVehicleController remoteVehicleController;
+        public RemotePlayerController RemotePlayerController;
+        public RemoteVehicleController RemoteVehicleController;
 
-        public bool isSpawned;
+        public bool IsSpawned;
 
-        public bool bInitialized = false;
+        public bool Initialized = false;
 
         public Client()
         {
-            instance = this;
+            Instance = this;
             Interval = Shared.Settings.TickRate;
             KeyDown += new GTA.KeyEventHandler(OnKeyDown);
             Tick += new EventHandler(OnTick);
@@ -40,37 +40,37 @@ namespace ivmp_client_core
             NetPeerConfiguration config = new NetPeerConfiguration("ivmp");
             config.AutoFlushSendQueue = true;
             config.ConnectionTimeout = 30;
-            client = new NetClient(config);
-            client.Start();
+            NetClient = new NetClient(config);
+            NetClient.Start();
             Connect("25.152.94.206", 7777);
         }
 
         public void Connect(string IP, int port)
         {
-            if(client.ConnectionStatus == NetConnectionStatus.Connected)
+            if(NetClient.ConnectionStatus == NetConnectionStatus.Connected)
             {
                 Disconnect();
             }
-            NetOutgoingMessage msg = client.CreateMessage();
+            NetOutgoingMessage msg = NetClient.CreateMessage();
             msg.Write(Shared.Settings.NetworkVersion);
-            client.Connect(IP, port, msg);
+            NetClient.Connect(IP, port, msg);
         }
 
         public void Disconnect()
         {
-            client.Disconnect("Disconnect");
+            NetClient.Disconnect("Disconnect");
         }
 
         public void OnTick(object sender, EventArgs e)
         {
-            if(client == null)
+            if(NetClient == null)
             {
                 return;
             }
 
             NetIncomingMessage msg;
 
-            while((msg = client.ReadMessage()) != null)
+            while((msg = NetClient.ReadMessage()) != null)
             {
                 switch(msg.MessageType)
                 {
@@ -82,7 +82,7 @@ namespace ivmp_client_core
                                 Game.Console.Print("Connecting to server.");
                                 break;
                             case NetConnectionStatus.Connected:
-                                Game.Console.Print("Connected to server. ID: " + client.UniqueIdentifier);
+                                Game.Console.Print("Connected to server. ID: " + NetClient.UniqueIdentifier);
                                 World.CarDensity = 0;
                                 World.PedDensity = 0;
                                 GTA.Native.Function.Call("CLEAR_AREA", 0.0f, 0.0f, 0.0f, 4000.0f, true);
@@ -103,11 +103,11 @@ namespace ivmp_client_core
                                 {
                                     vehicle.Delete();
                                 }
-                                remotePlayerController = new RemotePlayerController();
-                                remoteVehicleController = new RemoteVehicleController();
-                                isSpawned = false;
+                                RemotePlayerController = new RemotePlayerController();
+                                RemoteVehicleController = new RemoteVehicleController();
+                                IsSpawned = false;
                                 Game.FadeScreenOut(1);
-                                bInitialized = true;
+                                Initialized = true;
                                 break;
                             case NetConnectionStatus.Disconnected:
                                 Game.Console.Print("Disconnected from server.");
@@ -125,8 +125,8 @@ namespace ivmp_client_core
                             case (int)Shared.NetworkMessageType.PlayerDisconnected:
                                 {
                                     long ID = msg.ReadInt64();
-                                    RemotePlayer player = remotePlayerController.findByID(ID);
-                                    remotePlayerController.remove(player);
+                                    RemotePlayer player = RemotePlayerController.FindByID(ID);
+                                    RemotePlayerController.Remove(player);
                                     player.Destroy();
                                     player = null;
                                     break;
@@ -146,8 +146,8 @@ namespace ivmp_client_core
                                     PlayerData.isWalking = msg.ReadBoolean();
                                     PlayerData.isRunning = msg.ReadBoolean();
                                     PlayerData.isJumping = msg.ReadBoolean();
-                                    RemotePlayer player = remotePlayerController.findByID(PlayerData.ID);
-                                    player.name = PlayerData.Name;
+                                    RemotePlayer player = RemotePlayerController.FindByID(PlayerData.ID);
+                                    player.Name = PlayerData.Name;
                                     player.SetHealth(PlayerData.Health);
                                     player.SetArmor(PlayerData.Armor);
                                     Vector3 position = new Vector3();
@@ -156,12 +156,12 @@ namespace ivmp_client_core
                                     position.Z = PlayerData.Pos_Z - 1.0f;
                                     player.SetPosition(position);
                                     player.SetHeading(PlayerData.Heading);
-                                    player.isWalking = PlayerData.isWalking;
-                                    player.isRunning = PlayerData.isRunning;
-                                    player.isJumping = PlayerData.isJumping;
+                                    player.IsWalking = PlayerData.isWalking;
+                                    player.IsRunning = PlayerData.isRunning;
+                                    player.IsJumping = PlayerData.isJumping;
 
                                     player.Interpolation_Start = DateTime.Now;
-                                    player.Interpolation_End = DateTime.Now.AddMilliseconds((double)Shared.Settings.TickRate).AddMilliseconds(client.ServerConnection.AverageRoundtripTime / 1000);
+                                    player.Interpolation_End = DateTime.Now.AddMilliseconds((double)Shared.Settings.TickRate).AddMilliseconds(NetClient.ServerConnection.AverageRoundtripTime / 1000);
                                     player.Update();
                                     break;
                                 }
@@ -172,7 +172,7 @@ namespace ivmp_client_core
                                     position.Y = msg.ReadFloat();
                                     position.Z = msg.ReadFloat();
                                     float Heading = msg.ReadFloat();
-                                    isSpawned = true;
+                                    IsSpawned = true;
                                     Game.LocalPlayer.Character.Position = position;
                                     Game.LocalPlayer.Character.Heading = Heading;
                                     break;
@@ -201,18 +201,18 @@ namespace ivmp_client_core
                                     VehicleData.Rot_Y = msg.ReadFloat();
                                     VehicleData.Rot_Z = msg.ReadFloat();
 
-                                    RemoteVehicle vehicle = remoteVehicleController.findByID(VehicleData.ID);
-                                    vehicle.Model = VehicleData.Model;
+                                    RemoteVehicle Vehicle = RemoteVehicleController.FindByID(VehicleData.ID);
+                                    Vehicle.Model = VehicleData.Model;
                                     Vector3 position = new Vector3();
                                     position.X = VehicleData.Pos_X;
                                     position.Y = VehicleData.Pos_Y;
                                     position.Z = VehicleData.Pos_Z;
-                                    vehicle.vehicle.Position = position;
+                                    Vehicle.Vehicle.Position = position;
                                     Quaternion rotation = new Quaternion();
                                     rotation.X = VehicleData.Rot_X;
                                     rotation.Y = VehicleData.Rot_Y;
                                     rotation.Z = VehicleData.Rot_Z;
-                                    vehicle.vehicle.RotationQuaternion = rotation;
+                                    Vehicle.Vehicle.RotationQuaternion = rotation;
                                     break;
                                 }
                             default:
@@ -227,9 +227,9 @@ namespace ivmp_client_core
                 }
             }
 
-            if (client.ConnectionStatus == NetConnectionStatus.Connected)
+            if (NetClient.ConnectionStatus == NetConnectionStatus.Connected)
             {
-                NetOutgoingMessage OutMsg = client.CreateMessage();
+                NetOutgoingMessage OutMsg = NetClient.CreateMessage();
                 PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
                 Vector3 PlayerPos = Game.LocalPlayer.Character.Position;
                 Vector3 PlayerRot = Game.LocalPlayer.Character.Direction;
@@ -258,7 +258,7 @@ namespace ivmp_client_core
                 OutMsg.Write(PlayerData.isWalking);
                 OutMsg.Write(PlayerData.isRunning);
                 OutMsg.Write(PlayerData.isJumping);
-                client.SendMessage(OutMsg, NetDeliveryMethod.UnreliableSequenced);
+                NetClient.SendMessage(OutMsg, NetDeliveryMethod.UnreliableSequenced);
             }
         }
 
@@ -273,9 +273,9 @@ namespace ivmp_client_core
 
         public void OnFrameRender(object sender, GraphicsEventArgs e)
         {
-            if(bInitialized && client.ConnectionStatus == NetConnectionStatus.Connected)
+            if(Initialized && NetClient.ConnectionStatus == NetConnectionStatus.Connected)
             {
-                List<RemotePlayer> players = remotePlayerController.players;
+                List<RemotePlayer> players = RemotePlayerController.Players;
                 foreach(var player in players)
                 {
                     player.UpdateInterpolation();

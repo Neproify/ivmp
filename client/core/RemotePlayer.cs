@@ -15,13 +15,13 @@ namespace ivmp_client_core
 {
     public class RemotePlayer
     {
-        public bool bInitialized = false;
+        public bool Initialized = false;
 
         RemotePlayerAnimationManager AnimationManager;
 
         public long ID;
-        public string name;
-        public Ped ped;
+        public string Name;
+        public Ped Ped;
 
         /*public float Pos_X;
         public float Pos_Y;
@@ -38,24 +38,24 @@ namespace ivmp_client_core
         public float End_Pos_Z;
         public float End_Heading;
 
-        public bool isWalking;
-        public bool isRunning;
-        public bool isJumping;
+        public bool IsWalking;
+        public bool IsRunning;
+        public bool IsJumping;
 
         public RemotePlayer()
         {
-            ped = World.CreatePed(Vector3.Zero);
-            ped.BlockGestures = true;
-            ped.BlockPermanentEvents = true;
-            ped.BlockWeaponSwitching = true;
-            ped.PreventRagdoll = true;
+            Ped = World.CreatePed(Vector3.Zero);
+            Ped.BlockGestures = true;
+            Ped.BlockPermanentEvents = true;
+            Ped.BlockWeaponSwitching = true;
+            Ped.PreventRagdoll = true;
             AnimationManager = new RemotePlayerAnimationManager(this);
-            bInitialized = true;
+            Initialized = true;
         }
 
         public void Destroy()
         {
-            ped.Delete();
+            Ped.Delete();
         }
 
         public void SetPosition(Vector3 Position, bool instant)
@@ -100,17 +100,17 @@ namespace ivmp_client_core
 
         public void SetHealth(int Health)
         {
-            if(ped.Exists() == true)
+            if(Ped.Exists() == true)
             {
-                ped.Health = Health;
+                Ped.Health = Health;
             }
         }
 
         public void SetArmor(int Armor)
         {
-            if(ped.Exists() == true)
+            if(Ped.Exists() == true)
             {
-                ped.Armor = Armor;
+                Ped.Armor = Armor;
             }
         }
 
@@ -156,7 +156,7 @@ namespace ivmp_client_core
                 Vector3 currentPosition;
                 currentPosition = Vector3.Lerp(startPosition, endPosition, fProgress);
 
-                ped.Position = currentPosition;
+                Ped.Position = currentPosition;
             }
             // interpolate heading
             /*ped.Heading = Heading;*/
@@ -167,38 +167,38 @@ namespace ivmp_client_core
                 Vector2 startHeading = new Vector2(Start_Heading, 0);
                 Vector2 endHeading = new Vector2(End_Heading, 0);
                 currentHeading = Vector2.Lerp(startHeading, endHeading, fProgress).X;
-                ped.Heading = currentHeading;
+                Ped.Heading = currentHeading;
             }
         }
 
         public void Update()
         {
-            if (!bInitialized)
+            if (!Initialized)
                 return;
             /*bool bCancelPositionUpdate = false;
             bool bCancelRotationUpdate = false;*/
 
-            bool bAnimationPlayed = false;
-            if (isJumping == true && !bAnimationPlayed)
+            bool AnimationPlayed = false;
+            if (IsJumping == true && !AnimationPlayed)
             {
                 AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Jump);
-                bAnimationPlayed = true;
+                AnimationPlayed = true;
                 //bCancelPositionUpdate = true;
             }
-            if (isRunning == true && !bAnimationPlayed)
+            if (IsRunning == true && !AnimationPlayed)
             {
                 AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Run);
-                bAnimationPlayed = true;
+                AnimationPlayed = true;
             }
-            if (isWalking == true && !bAnimationPlayed)
+            if (IsWalking == true && !AnimationPlayed)
             {
                 AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Walk);
-                bAnimationPlayed = true;
+                AnimationPlayed = true;
             }
-            if (!bAnimationPlayed)
+            if (!AnimationPlayed)
             {
                 AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.StandStill);
-                bAnimationPlayed = true;
+                AnimationPlayed = true;
             }
             
         }

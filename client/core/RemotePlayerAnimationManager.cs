@@ -15,75 +15,75 @@ namespace ivmp_client_core
 {
     class RemotePlayerAnimationManager
     {
-        public bool bInitialized = false;
+        public bool Initialized = false;
 
-        AnimationSet walkAnimations;
-        RemotePlayer player;
-        Shared.RemotePlayerAnimations currentAnimation;
-        Vector3 lastRunToCord;
-        Vector3 lastWalkToCord;
+        AnimationSet WalkAnimations;
+        RemotePlayer Player;
+        Shared.RemotePlayerAnimations CurrentAnimation;
+        Vector3 LastRunToCord;
+        Vector3 LastWalkToCord;
 
-        public RemotePlayerAnimationManager(RemotePlayer player)
+        public RemotePlayerAnimationManager(RemotePlayer Player)
         {
-            this.player = player;
-            walkAnimations = new AnimationSet("move_m@casual");
-            currentAnimation = (int)Shared.RemotePlayerAnimations.StandStill;
-            lastRunToCord = Vector3.Zero;
-            lastWalkToCord = Vector3.Zero;
-            bInitialized = true;
+            this.Player = Player;
+            WalkAnimations = new AnimationSet("move_m@casual");
+            CurrentAnimation = (int)Shared.RemotePlayerAnimations.StandStill;
+            LastRunToCord = Vector3.Zero;
+            LastWalkToCord = Vector3.Zero;
+            Initialized = true;
         }
 
         public void PlayAnimation(Shared.RemotePlayerAnimations animation)
         {
-            if(!player.ped.Exists() || !bInitialized)
+            if(!Player.Ped.Exists() || !Initialized)
             {
                 return;
             }
-            if(animation != currentAnimation)
+            if(animation != CurrentAnimation)
             {
-                currentAnimation = animation;
-                if(animation == Shared.RemotePlayerAnimations.RunTo && player.ped.Position.DistanceTo(player.GetPosition()) > 1.0f)
+                CurrentAnimation = animation;
+                if(animation == Shared.RemotePlayerAnimations.RunTo && Player.Ped.Position.DistanceTo(Player.GetPosition()) > 1.0f)
                 {
-                    if (lastRunToCord.DistanceTo(player.GetPosition()) > 1.0f)
+                    if (LastRunToCord.DistanceTo(Player.GetPosition()) > 1.0f)
                     {
-                        Vector3 position = player.GetPosition();
-                        player.ped.Task.RunTo(position);
-                        lastRunToCord = position;
+                        Vector3 position = Player.GetPosition();
+                        Player.Ped.Task.RunTo(position);
+                        LastRunToCord = position;
                     }
                     return;
                 }
-                if (animation == Shared.RemotePlayerAnimations.WalkTo && player.ped.Position.DistanceTo(player.GetPosition()) > 1.0f)
+                if (animation == Shared.RemotePlayerAnimations.WalkTo && Player.Ped.Position.DistanceTo(Player.GetPosition()) > 1.0f)
                 {
-                    if (lastWalkToCord.DistanceTo(player.GetPosition()) > 1.0f)
+                    if (LastWalkToCord.DistanceTo(Player.GetPosition()) > 1.0f)
                     {
-                        Vector3 position = player.GetPosition();
-                        player.ped.Task.GoTo(position);
-                        lastWalkToCord = position;
+                        Vector3 position = Player.GetPosition();
+                        Player.Ped.Task.GoTo(position);
+                        LastWalkToCord = position;
                     }
                     return;
                 }
 
-                player.ped.Task.AlwaysKeepTask = true;
+                Player.Ped.Task.AlwaysKeepTask = true;
                 switch (animation)
                 {
                     case Shared.RemotePlayerAnimations.Run:
                         {
-                            player.ped.Animation.Play(walkAnimations, "sprint", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
+                            Player.Ped.Animation.Play(WalkAnimations, "sprint", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
                             break;
                         }
                     case Shared.RemotePlayerAnimations.Walk:
                         {
-                            player.ped.Animation.Play(walkAnimations, "walk", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
+                            Player.Ped.Animation.Play(WalkAnimations, "walk", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
                             break;
                         }
                     case Shared.RemotePlayerAnimations.StandStill:
                         {
-                            player.ped.Animation.Play(walkAnimations, "idle", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
+                            Player.Ped.Animation.Play(WalkAnimations, "idle", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
                             break;
                         }
                     case Shared.RemotePlayerAnimations.Jump:
                         {
-                            GTA.Native.Function.Call("TASK_JUMP", player.ped, 1);
+                            GTA.Native.Function.Call("TASK_JUMP", Player.Ped, 1);
                             break;
                         }
                 }

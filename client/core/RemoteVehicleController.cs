@@ -15,40 +15,40 @@ namespace ivmp_client_core
 {
     public class RemoteVehicleController
     {
-        public List<RemoteVehicle> vehicles;
+        public List<RemoteVehicle> Vehicles;
 
         public RemoteVehicleController()
         {
-            vehicles = new List<RemoteVehicle>();
+            Vehicles = new List<RemoteVehicle>();
         }
 
-        public void add(RemoteVehicle vehicle)
+        public void Add(RemoteVehicle Vehicle)
         {
-            vehicles.Add(vehicle);
+            Vehicles.Add(Vehicle);
         }
 
-        public void remove(RemoteVehicle vehicle)
+        public void Remove(RemoteVehicle Vehicle)
         {
-            vehicles.Remove(vehicle);
+            Vehicles.Remove(Vehicle);
         }
 
-        public RemoteVehicle findByID(int ID)
+        public RemoteVehicle FindByID(int ID)
         {
-            RemoteVehicle vehicle;
-            if (!vehicles.Any(x => x.ID == ID))
+            RemoteVehicle Vehicle;
+            if (!Vehicles.Any(x => x.ID == ID))
             {
-                vehicle = new RemoteVehicle("Feltzer");
-                vehicle.ID = ID;
-                add(vehicle);
-                return vehicle;
+                Vehicle = new RemoteVehicle("Feltzer");
+                Vehicle.ID = ID;
+                Add(Vehicle);
+                return Vehicle;
             }
-            vehicle = vehicles.Find(x => x.ID == ID);
-            return vehicle;
+            Vehicle = Vehicles.Find(x => x.ID == ID);
+            return Vehicle;
         }
 
-        public RemoteVehicle findByGame(Vehicle vehicle)
+        public RemoteVehicle FindByGame(Vehicle Vehicle)
         {
-            return vehicles.Find(x => x.vehicle == vehicle);
+            return Vehicles.Find(x => x.Vehicle == Vehicle);
         }
     }
 }
