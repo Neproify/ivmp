@@ -42,7 +42,18 @@ namespace ivmp_client_core
             Config.ConnectionTimeout = 30;
             NetClient = new NetClient(Config);
             NetClient.Start();
-            Connect("25.152.94.206", 7777);
+            BindConsoleCommand("connect", ConnectCommand);
+            BindConsoleCommand("disconnect", DisconnectCommand);
+        }
+
+        public void ConnectCommand(ParameterCollection Parameter)
+        {
+            Connect(Parameter[0], Parameter.ToInteger(1));
+        }
+
+        public void DisconnectCommand(ParameterCollection Parameter)
+        {
+            Disconnect();
         }
 
         public void Connect(string IP, int port)
