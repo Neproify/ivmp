@@ -20,13 +20,8 @@ namespace ivmp_client_core
         public int ID;
         public string Model;
 
-        public float Pos_X;
-        public float Pos_Y;
-        public float Pos_Z;
-
-        public float Rot_X;
-        public float Rot_Y;
-        public float Rot_Z;
+        public Vector3 Position;
+        public Quaternion Rotation;
 
         public RemoteVehicle(string Model)
         {

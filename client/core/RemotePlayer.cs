@@ -23,19 +23,11 @@ namespace ivmp_client_core
         public string Name;
         public Ped Ped;
 
-        /*public float Pos_X;
-        public float Pos_Y;
-        public float Pos_Z;
-        public float Heading;*/
         public DateTime Interpolation_Start;
         public DateTime Interpolation_End;
-        public float Start_Pos_X;
-        public float Start_Pos_Y;
-        public float Start_Pos_Z;
+        public Vector3 StartPosition;
+        public Vector3 EndPosition;
         public float Start_Heading;
-        public float End_Pos_X;
-        public float End_Pos_Y;
-        public float End_Pos_Z;
         public float End_Heading;
 
         public bool IsWalking;
@@ -60,27 +52,15 @@ namespace ivmp_client_core
 
         public void SetPosition(Vector3 Position, bool instant)
         {
-            /*if(ped.Exists() == true)
-            {
-                Pos_X = Position.X;
-                Pos_Y = Position.Y;
-                Pos_Z = Position.Z;
-            }*/
             if (instant == true)
             {
-                Start_Pos_X = Position.X;
-                Start_Pos_Y = Position.Y;
-                Start_Pos_Z = Position.Z;
+                StartPosition = Position;
             }
             else
             {
-                Start_Pos_X = End_Pos_X;
-                Start_Pos_Y = End_Pos_Y;
-                Start_Pos_Z = End_Pos_Z;
+                StartPosition = EndPosition;
             }
-            End_Pos_X = Position.X;
-            End_Pos_Y = Position.Y;
-            End_Pos_Z = Position.Z;
+            EndPosition = Position;
         }
 
         public void SetPosition(Vector3 Position)
@@ -90,10 +70,6 @@ namespace ivmp_client_core
 
         public void SetHeading(float Heading)
         {
-            /*if(ped.Exists() == true)
-            {
-                this.Heading = Heading;
-            }*/
             Start_Heading = End_Heading;
             End_Heading = Heading;
         }
@@ -116,14 +92,10 @@ namespace ivmp_client_core
 
         public Vector3 GetPosition()
         {
-            /*if (ped.Exists() == true)
+            if(Ped.Exists() == true)
             {
-                Vector3 position = new Vector3();
-                position.X = Pos_X;
-                position.Y = Pos_Y;
-                position.Z = Pos_Z;
-                return position;
-            }*/
+                return Ped.Position;
+            }
             return Vector3.Zero;
         }
 
@@ -131,22 +103,9 @@ namespace ivmp_client_core
         {
 
             // interpolate position
-            /*if (!bCancelPositionUpdate)
-            {
-                ped.Position = GetPosition();
-            }*/
-
             if (true)
             {
                 float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
-                Vector3 StartPosition = new Vector3();
-                StartPosition.X = Start_Pos_X;
-                StartPosition.Y = Start_Pos_Y;
-                StartPosition.Z = Start_Pos_Z;
-                Vector3 EndPosition = new Vector3();
-                EndPosition.X = End_Pos_X;
-                EndPosition.Y = End_Pos_Y;
-                EndPosition.Z = End_Pos_Z;
 
                 if (StartPosition.DistanceTo(EndPosition) > 5.0f)
                 {
@@ -159,7 +118,6 @@ namespace ivmp_client_core
                 Ped.Position = CurrentPosition;
             }
             // interpolate heading
-            /*ped.Heading = Heading;*/
             if (true)
             {
                 float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
@@ -175,15 +133,12 @@ namespace ivmp_client_core
         {
             if (!Initialized)
                 return;
-            /*bool bCancelPositionUpdate = false;
-            bool bCancelRotationUpdate = false;*/
 
             bool AnimationPlayed = false;
             if (IsJumping == true && !AnimationPlayed)
             {
                 AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Jump);
                 AnimationPlayed = true;
-                //bCancelPositionUpdate = true;
             }
             if (IsRunning == true && !AnimationPlayed)
             {
