@@ -17,24 +17,16 @@ namespace ivmp_server_core
         public int ID;
         public string Model;
 
-        public float Pos_X;
-        public float Pos_Y;
-        public float Pos_Z;
+        public SharpDX.Vector3 Position;
 
-        public float Rot_X;
-        public float Rot_Y;
-        public float Rot_Z;
+        public SharpDX.Quaternion Rotation;
 
-        public Vehicle(string Model, float PosX, float PosY, float PosZ)
+        public Vehicle(string Model, SharpDX.Vector3 Position)
         {
             this.Model = Model;
-            Pos_X = PosX;
-            Pos_Y = PosY;
-            Pos_Z = PosZ;
+            this.Position = Position;
 
-            Rot_X = 0;
-            Rot_Y = 0;
-            Rot_Z = 0;
+            this.Rotation = SharpDX.Quaternion.Zero;
         }
     }
 }

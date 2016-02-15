@@ -28,9 +28,7 @@ namespace ivmp_server_core
         public int Health;
         public int Armor;
 
-        public float Pos_X;
-        public float Pos_Y;
-        public float Pos_Z;
+        public SharpDX.Vector3 Position;
 
         public float Heading;
 
@@ -38,13 +36,13 @@ namespace ivmp_server_core
         public bool IsRunning;
         public bool IsJumping;
         
-        public void Spawn(float Pos_X, float Pos_Y, float Pos_Z, float Heading)
+        public void Spawn(SharpDX.Vector3 Position, float Heading)
         {
             NetOutgoingMessage Msg = Server.NetServer.CreateMessage();
             Msg.Write((int)Shared.NetworkMessageType.SpawnPlayer);
-            Msg.Write(Pos_X);
-            Msg.Write(Pos_Y);
-            Msg.Write(Pos_Z);
+            Msg.Write(Position.X);
+            Msg.Write(Position.Y);
+            Msg.Write(Position.Z);
             Msg.Write(Heading);
             Server.NetServer.SendMessage(Msg, NetConnection, NetDeliveryMethod.ReliableOrdered);
             IsSpawned = true;

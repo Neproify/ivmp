@@ -37,6 +37,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\bin\Lidgren.Network.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX">
+      <HintPath>..\..\Vendor\SharpDX\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics">
+      <HintPath>..\..\Vendor\SharpDX\SharpDX.Mathematics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

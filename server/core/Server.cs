@@ -53,9 +53,9 @@ namespace ivmp_server_core
 
             // test vehicles
             //2783.87f, 426.42f, 5.82f
-            Vehicle Vehicle1 = new Vehicle("Infernus", 2785.87f, 426.42f, 5.82f);
-            Vehicle Vehicle2 = new Vehicle("Infernus", 2787.87f, 426.42f, 5.82f);
-            Vehicle Vehicle3 = new Vehicle("Infernus", 2789.87f, 426.42f, 5.82f);
+            Vehicle Vehicle1 = new Vehicle("Infernus", new SharpDX.Vector3(2785.87f, 426.42f, 5.82f));
+            Vehicle Vehicle2 = new Vehicle("Infernus", new SharpDX.Vector3(2787.87f, 426.42f, 5.82f));
+            Vehicle Vehicle3 = new Vehicle("Infernus", new SharpDX.Vector3(2789.87f, 426.42f, 5.82f));
             VehicleController.Add(Vehicle1);
             VehicleController.Add(Vehicle2);
             VehicleController.Add(Vehicle3);
@@ -95,7 +95,7 @@ namespace ivmp_server_core
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerConnected);
                                     OutMsg.Write(Player.ID);
                                     NetServer.SendToAll(OutMsg, Msg.SenderConnection, NetDeliveryMethod.ReliableUnordered, 1);
-                                    Player.Spawn(2783.87f, 426.42f, 5.82f, 45.0f);
+                                    Player.Spawn(new SharpDX.Vector3(2783.87f, 426.42f, 5.82f), 45.0f);
                                     Player.FadeScreenIn(1000);
                                     break;
                                 }
@@ -135,9 +135,11 @@ namespace ivmp_server_core
                                 Player.Name = PlayerData.Name;
                                 Player.Health = PlayerData.Health;
                                 Player.Armor = PlayerData.Armor;
-                                Player.Pos_X = PlayerData.Pos_X;
-                                Player.Pos_Y = PlayerData.Pos_Y;
-                                Player.Pos_Z = PlayerData.Pos_Z;
+                                SharpDX.Vector3 Position = new SharpDX.Vector3();
+                                Position.X = PlayerData.Pos_X;
+                                Position.Y = PlayerData.Pos_Y;
+                                Position.Z = PlayerData.Pos_Z;
+                                Player.Position = Position;
                                 Player.Heading = PlayerData.Heading;
                                 Player.IsWalking = PlayerData.IsWalking;
                                 Player.IsRunning = PlayerData.IsRunning;
@@ -171,9 +173,9 @@ namespace ivmp_server_core
                 PlayerData.Model = Player.Model;
                 PlayerData.Health = Player.Health;
                 PlayerData.Armor = Player.Armor;
-                PlayerData.Pos_X = Player.Pos_X;
-                PlayerData.Pos_Y = Player.Pos_Y;
-                PlayerData.Pos_Z = Player.Pos_Z;
+                PlayerData.Pos_X = Player.Position.X;
+                PlayerData.Pos_Y = Player.Position.Y;
+                PlayerData.Pos_Z = Player.Position.Z;
                 PlayerData.Heading = Player.Heading;
                 PlayerData.IsWalking = Player.IsWalking;
                 PlayerData.IsRunning = Player.IsRunning;
@@ -205,12 +207,12 @@ namespace ivmp_server_core
                 VehicleUpdateStruct VehicleData = new VehicleUpdateStruct();
                 VehicleData.ID = Vehicle.ID;
                 VehicleData.Model = Vehicle.Model;
-                VehicleData.Pos_X = Vehicle.Pos_X;
-                VehicleData.Pos_Y = Vehicle.Pos_Y;
-                VehicleData.Pos_Z = Vehicle.Pos_Z;
-                VehicleData.Rot_X = Vehicle.Rot_X;
-                VehicleData.Rot_Y = Vehicle.Rot_Y;
-                VehicleData.Rot_Z = Vehicle.Rot_Z;
+                VehicleData.Pos_X = Vehicle.Position.X;
+                VehicleData.Pos_Y = Vehicle.Position.Y;
+                VehicleData.Pos_Z = Vehicle.Position.Z;
+                VehicleData.Rot_X = Vehicle.Rotation.X;
+                VehicleData.Rot_Y = Vehicle.Rotation.Y;
+                VehicleData.Rot_Z = Vehicle.Rotation.Z;
 
                 Msg.Write((int)Shared.NetworkMessageType.UpdateVehicle);
                 Msg.Write(VehicleData.ID);
