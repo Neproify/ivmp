@@ -22,6 +22,7 @@ namespace ivmp_client_core
         public long ID;
         public string Name;
         public Ped Ped;
+        public RemoteVehicle CurrentVehicle;
 
         public DateTime Interpolation_Start;
         public DateTime Interpolation_End;

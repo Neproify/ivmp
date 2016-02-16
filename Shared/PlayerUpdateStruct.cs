@@ -12,22 +12,29 @@ namespace Shared
 {
     public class PlayerUpdateStruct
     {
-        public long ID; // only when sending to client
+        public long ID = 0; // only when sending to client
 
-        public string Name;
+        public string Name = "Player";
 
-        public string Model; // only when sending to client
-        public int Health;
-        public int Armor;
+        public string Model = "F_Y_SWAT"; // only when sending to client
+        public int Health = 0;
+        public int Armor = 0;
 
-        public float Pos_X;
-        public float Pos_Y;
-        public float Pos_Z;
+        public int CurrentVehicle = 0;
 
-        public float Heading;
+        public float Pos_X = 0f;
+        public float Pos_Y = 0f;
+        public float Pos_Z = 0f;
 
-        public bool IsWalking;
-        public bool IsRunning;
-        public bool IsJumping;
+        public float Rot_X = 0f;
+        public float Rot_Y = 0f;
+        public float Rot_Z = 0f;
+        public float Rot_A = 0f;
+
+        public float Heading = 0f;
+
+        public bool IsWalking = false;
+        public bool IsRunning = false;
+        public bool IsJumping = false;
     }
 }

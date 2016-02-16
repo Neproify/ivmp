@@ -150,6 +150,7 @@ namespace ivmp_client_core
                                     PlayerData.Model = Msg.ReadString();
                                     PlayerData.Health = Msg.ReadInt32();
                                     PlayerData.Armor = Msg.ReadInt32();
+                                    PlayerData.CurrentVehicle = Msg.ReadInt32();
                                     PlayerData.Pos_X = Msg.ReadFloat();
                                     PlayerData.Pos_Y = Msg.ReadFloat();
                                     PlayerData.Pos_Z = Msg.ReadFloat();
@@ -161,19 +162,26 @@ namespace ivmp_client_core
                                     Player.Name = PlayerData.Name;
                                     Player.SetHealth(PlayerData.Health);
                                     Player.SetArmor(PlayerData.Armor);
-                                    Vector3 Position = new Vector3();
-                                    Position.X = PlayerData.Pos_X;
-                                    Position.Y = PlayerData.Pos_Y;
-                                    Position.Z = PlayerData.Pos_Z - 1.0f;
-                                    Player.SetPosition(Position);
-                                    Player.SetHeading(PlayerData.Heading);
-                                    Player.IsWalking = PlayerData.IsWalking;
-                                    Player.IsRunning = PlayerData.IsRunning;
-                                    Player.IsJumping = PlayerData.IsJumping;
+                                    if (PlayerData.CurrentVehicle > 0)
+                                    {
+                                        Player.CurrentVehicle = RemoteVehicleController.FindByID(PlayerData.CurrentVehicle);
+                                    }
+                                    else
+                                    {
+                                        Vector3 Position = new Vector3();
+                                        Position.X = PlayerData.Pos_X;
+                                        Position.Y = PlayerData.Pos_Y;
+                                        Position.Z = PlayerData.Pos_Z - 1.0f;
+                                        Player.SetPosition(Position);
+                                        Player.SetHeading(PlayerData.Heading);
+                                        Player.IsWalking = PlayerData.IsWalking;
+                                        Player.IsRunning = PlayerData.IsRunning;
+                                        Player.IsJumping = PlayerData.IsJumping;
 
-                                    Player.Interpolation_Start = DateTime.Now;
-                                    Player.Interpolation_End = DateTime.Now.AddMilliseconds((double)Shared.Settings.TickRate).AddMilliseconds(NetClient.ServerConnection.AverageRoundtripTime / 1000);
-                                    Player.Update();
+                                        Player.Interpolation_Start = DateTime.Now;
+                                        Player.Interpolation_End = DateTime.Now.AddMilliseconds((double)Shared.Settings.TickRate).AddMilliseconds(NetClient.ServerConnection.AverageRoundtripTime / 1000);
+                                        Player.Update();
+                                    }
                                     break;
                                 }
                             case (int)Shared.NetworkMessageType.SpawnPlayer:
@@ -211,6 +219,7 @@ namespace ivmp_client_core
                                     VehicleData.Rot_X = Msg.ReadFloat();
                                     VehicleData.Rot_Y = Msg.ReadFloat();
                                     VehicleData.Rot_Z = Msg.ReadFloat();
+                                    VehicleData.Rot_A = Msg.ReadFloat();
 
                                     RemoteVehicle Vehicle = RemoteVehicleController.FindByID(VehicleData.ID);
                                     Vehicle.Model = VehicleData.Model;
@@ -219,11 +228,12 @@ namespace ivmp_client_core
                                     Position.Y = VehicleData.Pos_Y;
                                     Position.Z = VehicleData.Pos_Z;
                                     Vehicle.Vehicle.Position = Position;
-                                    Quaternion rotation = new Quaternion();
-                                    rotation.X = VehicleData.Rot_X;
-                                    rotation.Y = VehicleData.Rot_Y;
-                                    rotation.Z = VehicleData.Rot_Z;
-                                    Vehicle.Vehicle.RotationQuaternion = rotation;
+                                    Quaternion Rotation = new Quaternion();
+                                    Rotation.X = VehicleData.Rot_X;
+                                    Rotation.Y = VehicleData.Rot_Y;
+                                    Rotation.Z = VehicleData.Rot_Z;
+                                    Rotation.W = VehicleData.Rot_A;
+                                    Vehicle.Vehicle.RotationQuaternion = Rotation;
                                     break;
                                 }
                             default:
@@ -248,23 +258,43 @@ namespace ivmp_client_core
                 PlayerData.Name = Name;
                 PlayerData.Health = Game.LocalPlayer.Character.Health;
                 PlayerData.Armor = Game.LocalPlayer.Character.Armor;
-                PlayerData.Pos_X = PlayerPos.X;
-                PlayerData.Pos_Y = PlayerPos.Y;
-                PlayerData.Pos_Z = PlayerPos.Z;
-                PlayerData.Heading = PlayerHeading;
-                PlayerData.IsWalking = Game.isGameKeyPressed(GameKey.MoveBackward) ||
-                    Game.isGameKeyPressed(GameKey.MoveForward) ||
-                    Game.isGameKeyPressed(GameKey.MoveLeft) ||
-                    Game.isGameKeyPressed(GameKey.MoveRight);
-                PlayerData.IsRunning = Game.isGameKeyPressed(GameKey.Sprint);
-                PlayerData.IsJumping = Game.isGameKeyPressed(GameKey.Jump);
+                if (Game.LocalPlayer.Character.isInVehicle())
+                {
+                    Vehicle CurrentVehicle = Game.LocalPlayer.Character.CurrentVehicle;
+                    PlayerData.CurrentVehicle = RemoteVehicleController.FindByGame(CurrentVehicle).ID;
+                    PlayerData.Pos_X = CurrentVehicle.Position.X;
+                    PlayerData.Pos_Y = CurrentVehicle.Position.Y;
+                    PlayerData.Pos_Z = CurrentVehicle.Position.Z;
+                    PlayerData.Rot_X = CurrentVehicle.RotationQuaternion.X;
+                    PlayerData.Rot_Y = CurrentVehicle.RotationQuaternion.Y;
+                    PlayerData.Rot_Z = CurrentVehicle.RotationQuaternion.Z;
+                    PlayerData.Rot_A = CurrentVehicle.RotationQuaternion.W;
+                }
+                else
+                {
+                    PlayerData.Pos_X = PlayerPos.X;
+                    PlayerData.Pos_Y = PlayerPos.Y;
+                    PlayerData.Pos_Z = PlayerPos.Z;
+                    PlayerData.Heading = PlayerHeading;
+                    PlayerData.IsWalking = Game.isGameKeyPressed(GameKey.MoveBackward) ||
+                        Game.isGameKeyPressed(GameKey.MoveForward) ||
+                        Game.isGameKeyPressed(GameKey.MoveLeft) ||
+                        Game.isGameKeyPressed(GameKey.MoveRight);
+                    PlayerData.IsRunning = Game.isGameKeyPressed(GameKey.Sprint);
+                    PlayerData.IsJumping = Game.isGameKeyPressed(GameKey.Jump);
+                }
                 OutMsg.Write((int)NetworkMessageType.UpdatePlayer);
                 OutMsg.Write(PlayerData.Name);
                 OutMsg.Write(PlayerData.Health);
                 OutMsg.Write(PlayerData.Armor);
+                OutMsg.Write(PlayerData.CurrentVehicle);
                 OutMsg.Write(PlayerData.Pos_X);
                 OutMsg.Write(PlayerData.Pos_Y);
                 OutMsg.Write(PlayerData.Pos_Z);
+                OutMsg.Write(PlayerData.Rot_X);
+                OutMsg.Write(PlayerData.Rot_Y);
+                OutMsg.Write(PlayerData.Rot_Z);
+                OutMsg.Write(PlayerData.Rot_A);
                 OutMsg.Write(PlayerData.Heading);
                 OutMsg.Write(PlayerData.IsWalking);
                 OutMsg.Write(PlayerData.IsRunning);

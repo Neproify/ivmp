@@ -23,5 +23,6 @@ namespace Shared
         public float Rot_X;
         public float Rot_Y;
         public float Rot_Z;
+        public float Rot_A;
     }
 }

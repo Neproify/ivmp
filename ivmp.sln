@@ -8,8 +8,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{C215337A-3631-44EF-B2B1-D824D241094B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "core", "client\core\core.csproj", "{0393287D-AC2B-43D9-9F7D-3048384C0BF5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{49BA1C69-6104-41AC-A5D8-B54FA9F696E8} = {49BA1C69-6104-41AC-A5D8-B54FA9F696E8}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "core", "server\core\core.csproj", "{1483060F-92FF-4588-A800-0896F78463CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{49BA1C69-6104-41AC-A5D8-B54FA9F696E8} = {49BA1C69-6104-41AC-A5D8-B54FA9F696E8}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lidgren.Network", "Lidgren.Network\Lidgren.Network.csproj", "{49BA1C69-6104-41AC-A5D8-B54FA9F696E8}"
 EndProject
@@ -55,9 +61,11 @@ Global
 		{49BA1C69-6104-41AC-A5D8-B54FA9F696E8}.Release|x86.ActiveCfg = Release|Any CPU
 		{49BA1C69-6104-41AC-A5D8-B54FA9F696E8}.Release|x86.Build.0 = Release|Any CPU
 		{5DD209AC-1B5F-483A-BCA9-150CAD228C5A}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{5DD209AC-1B5F-483A-BCA9-150CAD228C5A}.Debug|Any CPU.Build.0 = Debug|Win32
 		{5DD209AC-1B5F-483A-BCA9-150CAD228C5A}.Debug|x86.ActiveCfg = Debug|Win32
 		{5DD209AC-1B5F-483A-BCA9-150CAD228C5A}.Debug|x86.Build.0 = Debug|Win32
 		{5DD209AC-1B5F-483A-BCA9-150CAD228C5A}.Release|Any CPU.ActiveCfg = Release|Win32
+		{5DD209AC-1B5F-483A-BCA9-150CAD228C5A}.Release|Any CPU.Build.0 = Release|Win32
 		{5DD209AC-1B5F-483A-BCA9-150CAD228C5A}.Release|x86.ActiveCfg = Release|Win32
 		{5DD209AC-1B5F-483A-BCA9-150CAD228C5A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection

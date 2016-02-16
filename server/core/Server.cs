@@ -124,9 +124,14 @@ namespace ivmp_server_core
                                 PlayerData.Name = Msg.ReadString();
                                 PlayerData.Health = Msg.ReadInt32();
                                 PlayerData.Armor = Msg.ReadInt32();
+                                PlayerData.CurrentVehicle = Msg.ReadInt32();
                                 PlayerData.Pos_X = Msg.ReadFloat();
                                 PlayerData.Pos_Y = Msg.ReadFloat();
                                 PlayerData.Pos_Z = Msg.ReadFloat();
+                                PlayerData.Rot_X = Msg.ReadFloat();
+                                PlayerData.Rot_Y = Msg.ReadFloat();
+                                PlayerData.Rot_Z = Msg.ReadFloat();
+                                PlayerData.Rot_A = Msg.ReadFloat();
                                 PlayerData.Heading = Msg.ReadFloat();
                                 PlayerData.IsWalking = Msg.ReadBoolean();
                                 PlayerData.IsRunning = Msg.ReadBoolean();
@@ -139,11 +144,27 @@ namespace ivmp_server_core
                                 Position.X = PlayerData.Pos_X;
                                 Position.Y = PlayerData.Pos_Y;
                                 Position.Z = PlayerData.Pos_Z;
-                                Player.Position = Position;
-                                Player.Heading = PlayerData.Heading;
-                                Player.IsWalking = PlayerData.IsWalking;
-                                Player.IsRunning = PlayerData.IsRunning;
-                                Player.IsJumping = PlayerData.IsJumping;
+                                SharpDX.Quaternion Rotation = new SharpDX.Quaternion();
+                                Rotation.X = PlayerData.Rot_X;
+                                Rotation.Y = PlayerData.Rot_Y;
+                                Rotation.Z = PlayerData.Rot_Z;
+                                Rotation.W = PlayerData.Rot_A;
+                                if (PlayerData.CurrentVehicle > 0)
+                                {
+                                    Vehicle Vehicle = VehicleController.GetByID(PlayerData.CurrentVehicle);
+                                    Vehicle.Position = Position;
+                                    Vehicle.Rotation = Rotation;
+                                    Vehicle.Driver = Player;
+                                    Player.CurrentVehicle = PlayerData.CurrentVehicle;
+                                }
+                                else
+                                {
+                                    Player.Position = Position;
+                                    Player.Heading = PlayerData.Heading;
+                                    Player.IsWalking = PlayerData.IsWalking;
+                                    Player.IsRunning = PlayerData.IsRunning;
+                                    Player.IsJumping = PlayerData.IsJumping;
+                                }
                                 break;
                             default:
                                 break;
@@ -173,6 +194,7 @@ namespace ivmp_server_core
                 PlayerData.Model = Player.Model;
                 PlayerData.Health = Player.Health;
                 PlayerData.Armor = Player.Armor;
+                PlayerData.CurrentVehicle = Player.CurrentVehicle;
                 PlayerData.Pos_X = Player.Position.X;
                 PlayerData.Pos_Y = Player.Position.Y;
                 PlayerData.Pos_Z = Player.Position.Z;
@@ -186,6 +208,7 @@ namespace ivmp_server_core
                 Msg.Write(PlayerData.Model);
                 Msg.Write(PlayerData.Health);
                 Msg.Write(PlayerData.Armor);
+                Msg.Write(PlayerData.CurrentVehicle);
                 Msg.Write(PlayerData.Pos_X);
                 Msg.Write(PlayerData.Pos_Y);
                 Msg.Write(PlayerData.Pos_Z);
@@ -213,6 +236,7 @@ namespace ivmp_server_core
                 VehicleData.Rot_X = Vehicle.Rotation.X;
                 VehicleData.Rot_Y = Vehicle.Rotation.Y;
                 VehicleData.Rot_Z = Vehicle.Rotation.Z;
+                VehicleData.Rot_A = Vehicle.Rotation.W;
 
                 Msg.Write((int)Shared.NetworkMessageType.UpdateVehicle);
                 Msg.Write(VehicleData.ID);
@@ -223,8 +247,16 @@ namespace ivmp_server_core
                 Msg.Write(VehicleData.Rot_X);
                 Msg.Write(VehicleData.Rot_Y);
                 Msg.Write(VehicleData.Rot_Z);
+                Msg.Write(VehicleData.Rot_A);
 
-                NetServer.SendToAll(Msg, NetDeliveryMethod.Unreliable);
+                if (Vehicle.Driver == null)
+                {
+                    NetServer.SendToAll(Msg, NetDeliveryMethod.Unreliable);
+                }
+                else
+                {
+                    NetServer.SendToAll(Msg, Vehicle.Driver.NetConnection, NetDeliveryMethod.Unreliable, 2);
+                }
             }
         }
 

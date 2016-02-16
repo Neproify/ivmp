@@ -17,6 +17,8 @@ namespace ivmp_server_core
         public int ID;
         public string Model;
 
+        public Player Driver = null;
+
         public SharpDX.Vector3 Position;
 
         public SharpDX.Quaternion Rotation;

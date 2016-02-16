@@ -20,6 +20,8 @@ namespace ivmp_server_core
         public long ID;
         public NetConnection NetConnection;
 
+        public int CurrentVehicle;
+
         public string Name;
 
         public bool IsSpawned;
