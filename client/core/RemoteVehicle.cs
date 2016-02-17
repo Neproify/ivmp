@@ -20,13 +20,71 @@ namespace ivmp_client_core
         public int ID;
         public string Model;
 
-        public Vector3 Position;
-        public Quaternion Rotation;
+        public DateTime Interpolation_Start;
+        public DateTime Interpolation_End;
+        public Vector3 StartPosition;
+        public Vector3 EndPosition;
+        public Quaternion StartRotation;
+        public Quaternion EndRotation;
 
         public RemoteVehicle(string Model)
         {
             this.Model = Model;
             Vehicle = World.CreateVehicle(Model, Vector3.Zero);
+        }
+
+        public void SetPosition(Vector3 Position, bool Instant)
+        {
+            if (Instant == true)
+            {
+                StartPosition = Position;
+            }
+            else
+            {
+                StartPosition = EndPosition;
+            }
+            EndPosition = Position;
+        }
+
+        public void SetPosition(Vector3 Position)
+        {
+            SetPosition(Position, false);
+        }
+
+        public void SetRotation(Quaternion Rotation)
+        {
+            StartRotation = EndRotation;
+            EndRotation = Rotation;
+        }
+
+        public void UpdateInterpolation()
+        {
+            // interpolate position
+            if (Vehicle.Exists())
+            {
+                float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
+
+                if (StartPosition.DistanceTo(EndPosition) > 5.0f)
+                {
+                    SetPosition(EndPosition, true);
+                }
+
+                Vector3 CurrentPosition;
+                CurrentPosition = Vector3.Lerp(StartPosition, EndPosition, Progress);
+
+                Vehicle.Position = CurrentPosition;
+            }
+
+            // interpolate rotation
+            if (Vehicle.Exists())
+            {
+                float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
+
+                Quaternion CurrentRotation;
+                CurrentRotation = Quaternion.Lerp(StartRotation, EndRotation, Progress);
+
+                Vehicle.RotationQuaternion = CurrentRotation;
+            }
         }
     }
 }

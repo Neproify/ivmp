@@ -51,9 +51,9 @@ namespace ivmp_client_core
             Ped.Delete();
         }
 
-        public void SetPosition(Vector3 Position, bool instant)
+        public void SetPosition(Vector3 Position, bool Instant)
         {
-            if (instant == true)
+            if (Instant == true)
             {
                 StartPosition = Position;
             }
@@ -104,7 +104,7 @@ namespace ivmp_client_core
         {
 
             // interpolate position
-            if (true)
+            if (Ped.Exists())
             {
                 float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
 
@@ -119,13 +119,14 @@ namespace ivmp_client_core
                 Ped.Position = CurrentPosition;
             }
             // interpolate heading
-            if (true)
+            if (Ped.Exists())
             {
                 float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
                 float CurrentHeading;
                 Vector2 StartHeading = new Vector2(Start_Heading, 0);
                 Vector2 EndHeading = new Vector2(End_Heading, 0);
                 CurrentHeading = Vector2.Lerp(StartHeading, EndHeading, Progress).X;
+
                 Ped.Heading = CurrentHeading;
             }
         }
@@ -135,28 +136,30 @@ namespace ivmp_client_core
             if (!Initialized)
                 return;
 
-            bool AnimationPlayed = false;
-            if (IsJumping == true && !AnimationPlayed)
+            if (Ped.Exists())
             {
-                AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Jump);
-                AnimationPlayed = true;
+                bool AnimationPlayed = false;
+                if (IsJumping == true && !AnimationPlayed)
+                {
+                    AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Jump);
+                    AnimationPlayed = true;
+                }
+                if (IsRunning == true && !AnimationPlayed)
+                {
+                    AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Run);
+                    AnimationPlayed = true;
+                }
+                if (IsWalking == true && !AnimationPlayed)
+                {
+                    AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Walk);
+                    AnimationPlayed = true;
+                }
+                if (!AnimationPlayed)
+                {
+                    AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.StandStill);
+                    AnimationPlayed = true;
+                }
             }
-            if (IsRunning == true && !AnimationPlayed)
-            {
-                AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Run);
-                AnimationPlayed = true;
-            }
-            if (IsWalking == true && !AnimationPlayed)
-            {
-                AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Walk);
-                AnimationPlayed = true;
-            }
-            if (!AnimationPlayed)
-            {
-                AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.StandStill);
-                AnimationPlayed = true;
-            }
-            
         }
     }
 }

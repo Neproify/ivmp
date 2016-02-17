@@ -227,13 +227,15 @@ namespace ivmp_client_core
                                     Position.X = VehicleData.Pos_X;
                                     Position.Y = VehicleData.Pos_Y;
                                     Position.Z = VehicleData.Pos_Z;
-                                    Vehicle.Vehicle.Position = Position;
+                                    Vehicle.SetPosition(Position);
                                     Quaternion Rotation = new Quaternion();
                                     Rotation.X = VehicleData.Rot_X;
                                     Rotation.Y = VehicleData.Rot_Y;
                                     Rotation.Z = VehicleData.Rot_Z;
                                     Rotation.W = VehicleData.Rot_A;
-                                    Vehicle.Vehicle.RotationQuaternion = Rotation;
+                                    Vehicle.SetRotation(Rotation);
+                                    Vehicle.Interpolation_Start = DateTime.Now;
+                                    Vehicle.Interpolation_End = DateTime.Now.AddMilliseconds((double)Shared.Settings.TickRate).AddMilliseconds(NetClient.ServerConnection.AverageRoundtripTime / 1000);
                                     break;
                                 }
                             default:
@@ -320,6 +322,23 @@ namespace ivmp_client_core
                 foreach(var Player in Players)
                 {
                     Player.UpdateInterpolation();
+                }
+
+                List<RemoteVehicle> Vehicles = RemoteVehicleController.Vehicles;
+                foreach(var Vehicle in Vehicles)
+                {
+                    bool CancelThisVehicleUpdate = false;
+                    if (Game.LocalPlayer.Character.isInVehicle())
+                    {
+                        if (Game.LocalPlayer.Character.CurrentVehicle == Vehicle.Vehicle)
+                        {
+                            CancelThisVehicleUpdate = true;
+                        }
+                    }
+                    if (CancelThisVehicleUpdate == false)
+                    {
+                        Vehicle.UpdateInterpolation();
+                    }
                 }
             }
         }
