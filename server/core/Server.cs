@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,15 +32,24 @@ namespace ivmp_server_core
         public Server()
         {
             Instance = this;
-            Port = 7777;
             TickRate = Shared.Settings.TickRate;
-            MaxPlayers = 32;
-            NetPeerConfiguration Config = new NetPeerConfiguration("ivmp");
-            Config.MaximumConnections = MaxPlayers;
-            Config.Port = Port;
-            Config.ConnectionTimeout = 50;
-            Config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
-            NetServer = new NetServer(Config);
+            if(!System.IO.File.Exists("serverconfig.xml"))
+            {
+                Console.WriteLine("Config file not found...");
+                System.Threading.Thread.Sleep(5000);
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            }
+            XmlDocument Config = new XmlDocument();
+            Config.Load("serverconfig.xml");
+            Port = int.Parse(Config.DocumentElement.SelectSingleNode("/Config/ServerPort").InnerText);
+            MaxPlayers = int.Parse(Config.DocumentElement.SelectSingleNode("/Config/MaxPlayers").InnerText);
+
+            NetPeerConfiguration NetConfig = new NetPeerConfiguration("ivmp");
+            NetConfig.MaximumConnections = MaxPlayers;
+            NetConfig.Port = Port;
+            NetConfig.ConnectionTimeout = 50;
+            NetConfig.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
+            NetServer = new NetServer(NetConfig);
             NetServer.Start();
             PlayerController = new PlayerController();
             VehicleController = new VehicleController();
