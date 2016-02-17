@@ -121,21 +121,7 @@ namespace ivmp_server_core
                         {
                             case (int)Shared.NetworkMessageType.UpdatePlayer:
                                 PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
-                                PlayerData.Name = Msg.ReadString();
-                                PlayerData.Health = Msg.ReadInt32();
-                                PlayerData.Armor = Msg.ReadInt32();
-                                PlayerData.CurrentVehicle = Msg.ReadInt32();
-                                PlayerData.Pos_X = Msg.ReadFloat();
-                                PlayerData.Pos_Y = Msg.ReadFloat();
-                                PlayerData.Pos_Z = Msg.ReadFloat();
-                                PlayerData.Rot_X = Msg.ReadFloat();
-                                PlayerData.Rot_Y = Msg.ReadFloat();
-                                PlayerData.Rot_Z = Msg.ReadFloat();
-                                PlayerData.Rot_A = Msg.ReadFloat();
-                                PlayerData.Heading = Msg.ReadFloat();
-                                PlayerData.IsWalking = Msg.ReadBoolean();
-                                PlayerData.IsRunning = Msg.ReadBoolean();
-                                PlayerData.IsJumping = Msg.ReadBoolean();
+                                Msg.ReadAllFields(PlayerData);
                                 Player Player = PlayerController.FindByID(Msg.SenderConnection.RemoteUniqueIdentifier);
                                 Player.Name = PlayerData.Name;
                                 Player.Health = PlayerData.Health;
@@ -203,19 +189,7 @@ namespace ivmp_server_core
                 PlayerData.IsRunning = Player.IsRunning;
                 PlayerData.IsJumping = Player.IsJumping;
 
-                Msg.Write(PlayerData.ID);
-                Msg.Write(PlayerData.Name);
-                Msg.Write(PlayerData.Model);
-                Msg.Write(PlayerData.Health);
-                Msg.Write(PlayerData.Armor);
-                Msg.Write(PlayerData.CurrentVehicle);
-                Msg.Write(PlayerData.Pos_X);
-                Msg.Write(PlayerData.Pos_Y);
-                Msg.Write(PlayerData.Pos_Z);
-                Msg.Write(PlayerData.Heading);
-                Msg.Write(PlayerData.IsWalking);
-                Msg.Write(PlayerData.IsRunning);
-                Msg.Write(PlayerData.IsJumping);
+                Msg.WriteAllFields(PlayerData);
 
                 NetServer.SendToAll(Msg, Player.NetConnection, NetDeliveryMethod.Unreliable, 1);
             }
@@ -239,15 +213,7 @@ namespace ivmp_server_core
                 VehicleData.Rot_A = Vehicle.Rotation.W;
 
                 Msg.Write((int)Shared.NetworkMessageType.UpdateVehicle);
-                Msg.Write(VehicleData.ID);
-                Msg.Write(VehicleData.Model);
-                Msg.Write(VehicleData.Pos_X);
-                Msg.Write(VehicleData.Pos_Y);
-                Msg.Write(VehicleData.Pos_Z);
-                Msg.Write(VehicleData.Rot_X);
-                Msg.Write(VehicleData.Rot_Y);
-                Msg.Write(VehicleData.Rot_Z);
-                Msg.Write(VehicleData.Rot_A);
+                Msg.WriteAllFields(VehicleData);
 
                 if (Vehicle.Driver == null)
                 {

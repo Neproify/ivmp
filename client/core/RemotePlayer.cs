@@ -48,7 +48,10 @@ namespace ivmp_client_core
 
         public void Destroy()
         {
-            Ped.Delete();
+            if (Ped.Exists())
+            {
+                Ped.Delete();
+            }
         }
 
         public void SetPosition(Vector3 Position, bool Instant)

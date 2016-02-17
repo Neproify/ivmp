@@ -70,6 +70,9 @@ namespace ivmp_client_core
         public void Disconnect()
         {
             NetClient.Disconnect("Disconnect");
+            RemotePlayerController = null;
+            RemoteVehicleController = null;
+            Initialized = false;
         }
 
         public void OnTick(object sender, EventArgs e)
@@ -104,15 +107,21 @@ namespace ivmp_client_core
                                 Ped[] Peds = World.GetAllPeds();
                                 foreach(var Ped in Peds)
                                 {
-                                    if(Ped != Game.LocalPlayer.Character)
+                                    if (Ped.Exists())
                                     {
-                                        Ped.Delete();
+                                        if (Ped != Game.LocalPlayer.Character)
+                                        {
+                                            Ped.Delete();
+                                        }
                                     }
                                 }
                                 Vehicle[] Vehicles = World.GetAllVehicles();
                                 foreach(var Vehicle in Vehicles)
                                 {
-                                    Vehicle.Delete();
+                                    if (Vehicle.Exists())
+                                    {
+                                        Vehicle.Delete();
+                                    }
                                 }
                                 RemotePlayerController = new RemotePlayerController();
                                 RemoteVehicleController = new RemoteVehicleController();
@@ -126,6 +135,8 @@ namespace ivmp_client_core
                         }
                         break;
                     case NetIncomingMessageType.Data:
+                        if (!Initialized)
+                            continue;
                         int MsgType = Msg.ReadInt32();
                         switch (MsgType)
                         {
@@ -135,6 +146,7 @@ namespace ivmp_client_core
                                 }
                             case (int)Shared.NetworkMessageType.PlayerDisconnected:
                                 {
+                                    Game.Console.Print("PlayerDisconnected");
                                     long ID = Msg.ReadInt64();
                                     RemotePlayer Player = RemotePlayerController.FindByID(ID);
                                     RemotePlayerController.Remove(Player);
@@ -145,19 +157,7 @@ namespace ivmp_client_core
                             case (int)Shared.NetworkMessageType.UpdatePlayer:
                                 {
                                     PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
-                                    PlayerData.ID = Msg.ReadInt64();
-                                    PlayerData.Name = Msg.ReadString();
-                                    PlayerData.Model = Msg.ReadString();
-                                    PlayerData.Health = Msg.ReadInt32();
-                                    PlayerData.Armor = Msg.ReadInt32();
-                                    PlayerData.CurrentVehicle = Msg.ReadInt32();
-                                    PlayerData.Pos_X = Msg.ReadFloat();
-                                    PlayerData.Pos_Y = Msg.ReadFloat();
-                                    PlayerData.Pos_Z = Msg.ReadFloat();
-                                    PlayerData.Heading = Msg.ReadFloat();
-                                    PlayerData.IsWalking = Msg.ReadBoolean();
-                                    PlayerData.IsRunning = Msg.ReadBoolean();
-                                    PlayerData.IsJumping = Msg.ReadBoolean();
+                                    Msg.ReadAllFields(PlayerData);
                                     RemotePlayer Player = RemotePlayerController.FindByID(PlayerData.ID);
                                     Player.Name = PlayerData.Name;
                                     Player.SetHealth(PlayerData.Health);
@@ -211,15 +211,7 @@ namespace ivmp_client_core
                             case (int)Shared.NetworkMessageType.UpdateVehicle:
                                 {
                                     VehicleUpdateStruct VehicleData = new VehicleUpdateStruct();
-                                    VehicleData.ID = Msg.ReadInt32();
-                                    VehicleData.Model = Msg.ReadString();
-                                    VehicleData.Pos_X = Msg.ReadFloat();
-                                    VehicleData.Pos_Y = Msg.ReadFloat();
-                                    VehicleData.Pos_Z = Msg.ReadFloat();
-                                    VehicleData.Rot_X = Msg.ReadFloat();
-                                    VehicleData.Rot_Y = Msg.ReadFloat();
-                                    VehicleData.Rot_Z = Msg.ReadFloat();
-                                    VehicleData.Rot_A = Msg.ReadFloat();
+                                    Msg.ReadAllFields(VehicleData);
 
                                     RemoteVehicle Vehicle = RemoteVehicleController.FindByID(VehicleData.ID);
                                     Vehicle.Model = VehicleData.Model;
@@ -286,21 +278,7 @@ namespace ivmp_client_core
                     PlayerData.IsJumping = Game.isGameKeyPressed(GameKey.Jump);
                 }
                 OutMsg.Write((int)NetworkMessageType.UpdatePlayer);
-                OutMsg.Write(PlayerData.Name);
-                OutMsg.Write(PlayerData.Health);
-                OutMsg.Write(PlayerData.Armor);
-                OutMsg.Write(PlayerData.CurrentVehicle);
-                OutMsg.Write(PlayerData.Pos_X);
-                OutMsg.Write(PlayerData.Pos_Y);
-                OutMsg.Write(PlayerData.Pos_Z);
-                OutMsg.Write(PlayerData.Rot_X);
-                OutMsg.Write(PlayerData.Rot_Y);
-                OutMsg.Write(PlayerData.Rot_Z);
-                OutMsg.Write(PlayerData.Rot_A);
-                OutMsg.Write(PlayerData.Heading);
-                OutMsg.Write(PlayerData.IsWalking);
-                OutMsg.Write(PlayerData.IsRunning);
-                OutMsg.Write(PlayerData.IsJumping);
+                OutMsg.WriteAllFields(PlayerData);
                 NetClient.SendMessage(OutMsg, NetDeliveryMethod.UnreliableSequenced);
             }
         }
