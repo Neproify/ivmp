@@ -145,6 +145,12 @@ namespace ivmp_server_core
                                 }
                                 else
                                 {
+                                    if(Player.CurrentVehicle > 0)
+                                    {
+                                        Vehicle Vehicle = VehicleController.GetByID(Player.CurrentVehicle);
+                                        Vehicle.Driver = null;
+                                        Player.CurrentVehicle = 0;
+                                    }
                                     Player.Position = Position;
                                     Player.Heading = PlayerData.Heading;
                                     Player.IsWalking = PlayerData.IsWalking;

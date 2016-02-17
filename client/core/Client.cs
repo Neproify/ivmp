@@ -99,6 +99,8 @@ namespace ivmp_client_core
                                 Game.Console.Print("Connected to server. ID: " + NetClient.UniqueIdentifier);
                                 World.CarDensity = 0;
                                 World.PedDensity = 0;
+                                Game.WantedMultiplier = 0;
+                                Game.LocalPlayer.WantedLevel = 0;
                                 GTA.Native.Function.Call("CLEAR_AREA", 0.0f, 0.0f, 0.0f, 4000.0f, true);
                                 Game.LocalPlayer.Character.BlockGestures = true;
                                 Game.LocalPlayer.Character.BlockPermanentEvents = true;
