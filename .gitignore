@@ -19,6 +19,7 @@ x64/
 x86/
 bld/
 [Bb]in/
+!client/ScriptHook/bin/
 [Oo]bj/
 [Ll]og/
 
