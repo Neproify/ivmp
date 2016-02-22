@@ -1,4 +1,6 @@
 <Config>
 	<MaxPlayers>32</MaxPlayers>
 	<ServerPort>7777</ServerPort>
+
+	<Resource Name="Test" />
 </Config>

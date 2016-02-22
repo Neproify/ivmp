@@ -7,4 +7,5 @@ SET VERSION="0.2.1"
 7z a IVMP-%VERSION%-%REVISION%-Server.zip ../bin/ivmp_server_core.exe
 7z a IVMP-%VERSION%-%REVISION%-Server.zip ../bin/SharpDX.dll
 7z a IVMP-%VERSION%-%REVISION%-Server.zip ../bin/SharpDX.Mathematics.dll
-7z a IVMP-%VERSION%-%REVISION%-Server.zip ./server/serverconfig.xml
+7z a IVMP-%VERSION%-%REVISION%-Server.zip ../bin/Jint.dll
+7z a IVMP-%VERSION%-%REVISION%-Server.zip ./server/*

@@ -28,6 +28,7 @@ namespace ivmp_server_core
         public NetServer NetServer;
         public PlayersController PlayersController;
         public VehiclesController VehiclesController;
+        public Scripting.ResourcesManager ResourcesManager;
 
         public Server()
         {
@@ -43,6 +44,7 @@ namespace ivmp_server_core
             Config.Load("serverconfig.xml");
             Port = int.Parse(Config.DocumentElement.SelectSingleNode("/Config/ServerPort").InnerText);
             MaxPlayers = int.Parse(Config.DocumentElement.SelectSingleNode("/Config/MaxPlayers").InnerText);
+            XmlNodeList Resources = Config.DocumentElement.SelectNodes("/Config/Resource");
 
             NetPeerConfiguration NetConfig = new NetPeerConfiguration("ivmp");
             NetConfig.MaximumConnections = MaxPlayers;
@@ -53,6 +55,16 @@ namespace ivmp_server_core
             NetServer.Start();
             PlayersController = new PlayersController();
             VehiclesController = new VehiclesController();
+            ResourcesManager = new Scripting.ResourcesManager();
+            ResourcesManager.Server = Instance;
+
+            // load resources
+            foreach(XmlNode Resource in Resources)
+            {
+                ResourcesManager.Load(Resource.Attributes["Name"].InnerText);
+                ResourcesManager.Start(Resource.Attributes["Name"].InnerText);
+            }
+
             Timer tick = new Timer();
             tick.Elapsed += OnTick;
             tick.Interval = TickRate;
@@ -60,15 +72,6 @@ namespace ivmp_server_core
             tick.Start();
             Console.WriteLine("Started game server on Port " + Port);
             Console.WriteLine("Max Players: " + MaxPlayers);
-
-            // test vehicles
-            //2783.87f, 426.42f, 5.82f
-            Vehicle Vehicle1 = new Vehicle("Infernus", new SharpDX.Vector3(2785.87f, 426.42f, 5.82f));
-            Vehicle Vehicle2 = new Vehicle("Infernus", new SharpDX.Vector3(2787.87f, 426.42f, 5.82f));
-            Vehicle Vehicle3 = new Vehicle("Infernus", new SharpDX.Vector3(2789.87f, 426.42f, 5.82f));
-            VehiclesController.Add(Vehicle1);
-            VehiclesController.Add(Vehicle2);
-            VehiclesController.Add(Vehicle3);
         }
 
         public void OnTick(object sender, ElapsedEventArgs e)

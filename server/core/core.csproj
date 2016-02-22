@@ -57,13 +57,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Player.cs" />
-    <Compile Include="PlayersController.cs" />
+    <Compile Include="Entities\Player.cs" />
+    <Compile Include="Entities\PlayersController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripting\Natives\ConsoleNatives.cs" />
+    <Compile Include="Scripting\Natives\VehicleNatives.cs" />
+    <Compile Include="Scripting\Resource.cs" />
+    <Compile Include="Scripting\ResourcesManager.cs" />
+    <Compile Include="Scripting\Script.cs" />
     <Compile Include="Server.cs" />
-    <Compile Include="Vehicle.cs" />
-    <Compile Include="VehiclesController.cs" />
+    <Compile Include="Entities\Vehicle.cs" />
+    <Compile Include="Entities\VehiclesController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
