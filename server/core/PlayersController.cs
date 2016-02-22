@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core
 {
-    public class PlayerController
+    public class PlayersController
     {
         public List<Player> Players;
 
-        public PlayerController()
+        public PlayersController()
         {
             Players = new List<Player>();
         }
@@ -31,7 +31,7 @@ namespace ivmp_server_core
             Players.Remove(Player);
         }
 
-        public Player FindByID(long ID)
+        public Player GetByID(long ID)
         {
             return Players.Find(Player => Player.ID == ID);
         }

@@ -22,8 +22,8 @@ namespace ivmp_client_core
         public NetClient NetClient;
 
         public string PlayerName;
-        public RemotePlayerController RemotePlayerController;
-        public RemoteVehicleController RemoteVehicleController;
+        public RemotePlayersController RemotePlayersController;
+        public RemoteVehiclesController RemoteVehiclesController;
 
         public bool IsSpawned;
 
@@ -70,8 +70,8 @@ namespace ivmp_client_core
         public void Disconnect()
         {
             NetClient.Disconnect("Disconnect");
-            RemotePlayerController = null;
-            RemoteVehicleController = null;
+            RemotePlayersController = null;
+            RemoteVehiclesController = null;
             Initialized = false;
         }
 
@@ -125,8 +125,8 @@ namespace ivmp_client_core
                                         Vehicle.Delete();
                                     }
                                 }
-                                RemotePlayerController = new RemotePlayerController();
-                                RemoteVehicleController = new RemoteVehicleController();
+                                RemotePlayersController = new RemotePlayersController();
+                                RemoteVehiclesController = new RemoteVehiclesController();
                                 IsSpawned = false;
                                 Game.FadeScreenOut(1);
                                 Initialized = true;
@@ -150,8 +150,8 @@ namespace ivmp_client_core
                                 {
                                     Game.Console.Print("PlayerDisconnected");
                                     long ID = Msg.ReadInt64();
-                                    RemotePlayer Player = RemotePlayerController.FindByID(ID);
-                                    RemotePlayerController.Remove(Player);
+                                    RemotePlayer Player = RemotePlayersController.GetByID(ID);
+                                    RemotePlayersController.Remove(Player);
                                     Player.Destroy();
                                     Player = null;
                                     break;
@@ -160,13 +160,13 @@ namespace ivmp_client_core
                                 {
                                     PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
                                     Msg.ReadAllFields(PlayerData);
-                                    RemotePlayer Player = RemotePlayerController.FindByID(PlayerData.ID);
+                                    RemotePlayer Player = RemotePlayersController.GetByID(PlayerData.ID);
                                     Player.Name = PlayerData.Name;
                                     Player.SetHealth(PlayerData.Health);
                                     Player.SetArmor(PlayerData.Armor);
                                     if (PlayerData.CurrentVehicle > 0)
                                     {
-                                        Player.CurrentVehicle = RemoteVehicleController.FindByID(PlayerData.CurrentVehicle);
+                                        Player.CurrentVehicle = RemoteVehiclesController.GetByID(PlayerData.CurrentVehicle);
                                     }
                                     else
                                     {
@@ -215,7 +215,7 @@ namespace ivmp_client_core
                                     VehicleUpdateStruct VehicleData = new VehicleUpdateStruct();
                                     Msg.ReadAllFields(VehicleData);
 
-                                    RemoteVehicle Vehicle = RemoteVehicleController.FindByID(VehicleData.ID);
+                                    RemoteVehicle Vehicle = RemoteVehiclesController.GetByID(VehicleData.ID);
                                     Vehicle.Model = VehicleData.Model;
                                     Vector3 Position = new Vector3();
                                     Position.X = VehicleData.Pos_X;
@@ -257,7 +257,7 @@ namespace ivmp_client_core
                 if (Game.LocalPlayer.Character.isInVehicle())
                 {
                     Vehicle CurrentVehicle = Game.LocalPlayer.Character.CurrentVehicle;
-                    PlayerData.CurrentVehicle = RemoteVehicleController.FindByGame(CurrentVehicle).ID;
+                    PlayerData.CurrentVehicle = RemoteVehiclesController.GetByGame(CurrentVehicle).ID;
                     PlayerData.Pos_X = CurrentVehicle.Position.X;
                     PlayerData.Pos_Y = CurrentVehicle.Position.Y;
                     PlayerData.Pos_Z = CurrentVehicle.Position.Z;
@@ -298,13 +298,13 @@ namespace ivmp_client_core
         {
             if(Initialized && NetClient.ConnectionStatus == NetConnectionStatus.Connected)
             {
-                List<RemotePlayer> Players = RemotePlayerController.Players;
+                List<RemotePlayer> Players = RemotePlayersController.Players;
                 foreach(var Player in Players)
                 {
                     Player.UpdateInterpolation();
                 }
 
-                List<RemoteVehicle> Vehicles = RemoteVehicleController.Vehicles;
+                List<RemoteVehicle> Vehicles = RemoteVehiclesController.Vehicles;
                 foreach(var Vehicle in Vehicles)
                 {
                     bool CancelThisVehicleUpdate = false;

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Jint</id>
+    <version>2.7.1</version>
+    <owners>Sebastien Ros</owners>
+    <authors>Sebastien Ros</authors>
+    <description>Javascript Interpreter for .NET</description>
+    <language>en-US</language>
+    <projectUrl>http://github.com/sebastienros/jint</projectUrl>
+    <licenseUrl>https://raw.githubusercontent.com/sebastienros/jint/master/LICENSE.txt</licenseUrl>
+    <releaseNotes>
+Improvement: Significant performance improvements
+Improvement: Configurable local timezone
+Improvement: Configurable local culture
+Bug: Local date and time representation
+Bug: Date prototype allowed usage
+Bug: Date.now precision
+Bug: Array index conversion
+Bug: Object is extensible
+Bug: Correct assignment evaluation
+    </releaseNotes>
+    <tags>javascript interpreter jint</tags>
+  </metadata>
+</package>

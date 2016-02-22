@@ -13,11 +13,11 @@ using GTA;
 
 namespace ivmp_client_core
 {
-    public class RemoteVehicleController
+    public class RemoteVehiclesController
     {
         public List<RemoteVehicle> Vehicles;
 
-        public RemoteVehicleController()
+        public RemoteVehiclesController()
         {
             Vehicles = new List<RemoteVehicle>();
         }
@@ -32,7 +32,7 @@ namespace ivmp_client_core
             Vehicles.Remove(Vehicle);
         }
 
-        public RemoteVehicle FindByID(int ID)
+        public RemoteVehicle GetByID(int ID)
         {
             RemoteVehicle Vehicle;
             if (!Vehicles.Any(x => x.ID == ID))
@@ -46,7 +46,7 @@ namespace ivmp_client_core
             return Vehicle;
         }
 
-        public RemoteVehicle FindByGame(Vehicle Vehicle)
+        public RemoteVehicle GetByGame(Vehicle Vehicle)
         {
             return Vehicles.Find(x => x.Vehicle == Vehicle);
         }

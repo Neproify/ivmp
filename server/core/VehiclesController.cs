@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core
 {
-    public class VehicleController
+    public class VehiclesController
     {
         List<Vehicle> Vehicles;
 
-        public VehicleController()
+        public VehiclesController()
         {
             Vehicles = new List<Vehicle>();
         }

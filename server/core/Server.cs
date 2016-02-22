@@ -26,8 +26,8 @@ namespace ivmp_server_core
         public int MaxPlayers;
 
         public NetServer NetServer;
-        public PlayerController PlayerController;
-        public VehicleController VehicleController;
+        public PlayersController PlayersController;
+        public VehiclesController VehiclesController;
 
         public Server()
         {
@@ -51,8 +51,8 @@ namespace ivmp_server_core
             NetConfig.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
             NetServer = new NetServer(NetConfig);
             NetServer.Start();
-            PlayerController = new PlayerController();
-            VehicleController = new VehicleController();
+            PlayersController = new PlayersController();
+            VehiclesController = new VehiclesController();
             Timer tick = new Timer();
             tick.Elapsed += OnTick;
             tick.Interval = TickRate;
@@ -66,9 +66,9 @@ namespace ivmp_server_core
             Vehicle Vehicle1 = new Vehicle("Infernus", new SharpDX.Vector3(2785.87f, 426.42f, 5.82f));
             Vehicle Vehicle2 = new Vehicle("Infernus", new SharpDX.Vector3(2787.87f, 426.42f, 5.82f));
             Vehicle Vehicle3 = new Vehicle("Infernus", new SharpDX.Vector3(2789.87f, 426.42f, 5.82f));
-            VehicleController.Add(Vehicle1);
-            VehicleController.Add(Vehicle2);
-            VehicleController.Add(Vehicle3);
+            VehiclesController.Add(Vehicle1);
+            VehiclesController.Add(Vehicle2);
+            VehiclesController.Add(Vehicle3);
         }
 
         public void OnTick(object sender, ElapsedEventArgs e)
@@ -100,7 +100,7 @@ namespace ivmp_server_core
                                     Player.Server = this;
                                     Player.ID = Msg.SenderConnection.RemoteUniqueIdentifier;
                                     Player.NetConnection = Msg.SenderConnection;
-                                    PlayerController.Add(Player);
+                                    PlayersController.Add(Player);
                                     NetOutgoingMessage OutMsg = NetServer.CreateMessage();
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerConnected);
                                     OutMsg.Write(Player.ID);
@@ -112,8 +112,8 @@ namespace ivmp_server_core
                             case NetConnectionStatus.Disconnected:
                                 {
                                     Console.WriteLine("Client disconnected. ID: " + Msg.SenderConnection.RemoteUniqueIdentifier);
-                                    Player Player = PlayerController.FindByID(Msg.SenderConnection.RemoteUniqueIdentifier);
-                                    PlayerController.Remove(Player);
+                                    Player Player = PlayersController.GetByID(Msg.SenderConnection.RemoteUniqueIdentifier);
+                                    PlayersController.Remove(Player);
                                     Player = null;
                                     NetOutgoingMessage OutMsg = NetServer.CreateMessage();
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerDisconnected);
@@ -132,7 +132,7 @@ namespace ivmp_server_core
                             case (int)Shared.NetworkMessageType.UpdatePlayer:
                                 PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
                                 Msg.ReadAllFields(PlayerData);
-                                Player Player = PlayerController.FindByID(Msg.SenderConnection.RemoteUniqueIdentifier);
+                                Player Player = PlayersController.GetByID(Msg.SenderConnection.RemoteUniqueIdentifier);
                                 Player.Name = PlayerData.Name;
                                 Player.Health = PlayerData.Health;
                                 Player.Armor = PlayerData.Armor;
@@ -147,7 +147,7 @@ namespace ivmp_server_core
                                 Rotation.W = PlayerData.Rot_A;
                                 if (PlayerData.CurrentVehicle > 0)
                                 {
-                                    Vehicle Vehicle = VehicleController.GetByID(PlayerData.CurrentVehicle);
+                                    Vehicle Vehicle = VehiclesController.GetByID(PlayerData.CurrentVehicle);
                                     Vehicle.Position = Position;
                                     Vehicle.Rotation = Rotation;
                                     Vehicle.Driver = Player;
@@ -157,7 +157,7 @@ namespace ivmp_server_core
                                 {
                                     if(Player.CurrentVehicle > 0)
                                     {
-                                        Vehicle Vehicle = VehicleController.GetByID(Player.CurrentVehicle);
+                                        Vehicle Vehicle = VehiclesController.GetByID(Player.CurrentVehicle);
                                         Vehicle.Driver = null;
                                         Player.CurrentVehicle = 0;
                                     }
@@ -185,7 +185,7 @@ namespace ivmp_server_core
 
         public void UpdateAllPlayers()
         {
-            List<Player> Players = PlayerController.GetAll();
+            List<Player> Players = PlayersController.GetAll();
             foreach (var Player in Players)
             {
                 NetOutgoingMessage Msg = NetServer.CreateMessage();
@@ -213,7 +213,7 @@ namespace ivmp_server_core
 
         public void UpdateAllVehicles()
         {
-            List<Vehicle> Vehicles = VehicleController.GetAll();
+            List<Vehicle> Vehicles = VehiclesController.GetAll();
             foreach(var Vehicle in Vehicles)
             {
                 NetOutgoingMessage Msg = NetServer.CreateMessage();

@@ -51,9 +51,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemotePlayer.cs" />
     <Compile Include="RemotePlayerAnimationManager.cs" />
-    <Compile Include="RemotePlayerController.cs" />
+    <Compile Include="RemotePlayersController.cs" />
     <Compile Include="RemoteVehicle.cs" />
-    <Compile Include="RemoteVehicleController.cs" />
+    <Compile Include="RemoteVehiclesController.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ScriptHookDotNet\ScriptHookDotNet.vcxproj">

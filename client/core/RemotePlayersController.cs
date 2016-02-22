@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace ivmp_client_core
 {
-    public class RemotePlayerController
+    public class RemotePlayersController
     {
         public List<RemotePlayer> Players;
 
-        public RemotePlayerController()
+        public RemotePlayersController()
         {
             Players = new List<RemotePlayer>();
         }
@@ -31,7 +31,7 @@ namespace ivmp_client_core
             Players.Remove(Player);
         }
 
-        public RemotePlayer FindByID(long ID)
+        public RemotePlayer GetByID(long ID)
         {
             RemotePlayer Player;
             if(!Players.Any(x => x.ID == ID))
