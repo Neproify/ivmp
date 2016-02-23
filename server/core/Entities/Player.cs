@@ -17,7 +17,7 @@ namespace ivmp_server_core
     {
         public Server Server;
 
-        public long ID;
+        public int ID;
         public NetConnection NetConnection;
 
         public int CurrentVehicle;

@@ -23,6 +23,17 @@ namespace ivmp_server_core
 
         public void Add(Player Player)
         {
+            Players.OrderBy(x => x.ID);
+            int FreeID = 1;
+            foreach (var Plr in Players)
+            {
+                if (Plr.ID > FreeID)
+                {
+                    break;
+                }
+                FreeID = Plr.ID + 1;
+            }
+            Player.ID = FreeID;
             Players.Add(Player);
         }
 

@@ -98,12 +98,11 @@ namespace ivmp_server_core
                         {
                             case NetConnectionStatus.Connected:
                                 {
-                                    Console.WriteLine("Client connected. ID: " + Msg.SenderConnection.RemoteUniqueIdentifier);
                                     Player Player = new Player();
                                     Player.Server = this;
-                                    Player.ID = Msg.SenderConnection.RemoteUniqueIdentifier;
                                     Player.NetConnection = Msg.SenderConnection;
                                     PlayersController.Add(Player);
+                                    Console.WriteLine("Client connected. ID: " + Player.ID);
                                     NetOutgoingMessage OutMsg = NetServer.CreateMessage();
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerConnected);
                                     OutMsg.Write(Player.ID);
@@ -114,9 +113,9 @@ namespace ivmp_server_core
                                 }
                             case NetConnectionStatus.Disconnected:
                                 {
-                                    Console.WriteLine("Client disconnected. ID: " + Msg.SenderConnection.RemoteUniqueIdentifier);
                                     Player Player = PlayersController.GetByID(Msg.SenderConnection.RemoteUniqueIdentifier);
                                     PlayersController.Remove(Player);
+                                    Console.WriteLine("Client disconnected. ID: " + Player.ID);
                                     Player = null;
                                     NetOutgoingMessage OutMsg = NetServer.CreateMessage();
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerDisconnected);
