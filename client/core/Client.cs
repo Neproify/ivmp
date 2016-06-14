@@ -161,6 +161,12 @@ namespace ivmp_client_core
                                     PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
                                     Msg.ReadAllFields(PlayerData);
                                     RemotePlayer Player = RemotePlayersController.GetByID(PlayerData.ID);
+                                    if(Player == null)
+                                    {
+                                        Player = new RemotePlayer();
+                                        Player.ID = PlayerData.ID;
+                                        RemotePlayersController.Add(Player);
+                                    }
                                     Player.Name = PlayerData.Name;
                                     Player.SetHealth(PlayerData.Health);
                                     Player.SetArmor(PlayerData.Armor);
@@ -216,6 +222,12 @@ namespace ivmp_client_core
                                     Msg.ReadAllFields(VehicleData);
 
                                     RemoteVehicle Vehicle = RemoteVehiclesController.GetByID(VehicleData.ID);
+                                    if(Vehicle == null)
+                                    {
+                                        Vehicle = new RemoteVehicle(VehicleData.Model);
+                                        Vehicle.ID = VehicleData.ID;
+                                        RemoteVehiclesController.Add(Vehicle);
+                                    }
                                     Vehicle.Model = VehicleData.Model;
                                     Vector3 Position = new Vector3();
                                     Position.X = VehicleData.Pos_X;

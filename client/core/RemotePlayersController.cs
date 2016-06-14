@@ -34,13 +34,6 @@ namespace ivmp_client_core
         public RemotePlayer GetByID(long ID)
         {
             RemotePlayer Player;
-            if(!Players.Any(x => x.ID == ID))
-            {
-                Player = new RemotePlayer();
-                Player.ID = ID;
-                Add(Player);
-                return Player;
-            }
             Player = Players.Find(x => x.ID == ID);
             return Player;
         }

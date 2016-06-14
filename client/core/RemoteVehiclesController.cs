@@ -35,13 +35,6 @@ namespace ivmp_client_core
         public RemoteVehicle GetByID(int ID)
         {
             RemoteVehicle Vehicle;
-            if (!Vehicles.Any(x => x.ID == ID))
-            {
-                Vehicle = new RemoteVehicle("Feltzer");
-                Vehicle.ID = ID;
-                Add(Vehicle);
-                return Vehicle;
-            }
             Vehicle = Vehicles.Find(x => x.ID == ID);
             return Vehicle;
         }
