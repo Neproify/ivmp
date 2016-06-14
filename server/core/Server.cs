@@ -115,10 +115,6 @@ namespace ivmp_server_core
                             case NetConnectionStatus.Disconnected:
                                 {
                                     Player Player = PlayersController.GetByNetConnection(Msg.SenderConnection);
-                                    if(Player == null)
-                                    {
-                                        Console.WriteLine("Player == null(Disconnect)");
-                                    }
                                     Console.WriteLine("Client disconnected. ID: " + Player.ID);
                                     PlayersController.Remove(Player);
                                     Player = null;
