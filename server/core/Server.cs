@@ -51,6 +51,7 @@ namespace ivmp_server_core
             NetConfig.Port = Port;
             NetConfig.ConnectionTimeout = 50;
             NetConfig.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
+            NetConfig.EnableMessageType(NetIncomingMessageType.StatusChanged);
             NetServer = new NetServer(NetConfig);
             NetServer.Start();
             PlayersController = new PlayersController();
@@ -113,9 +114,13 @@ namespace ivmp_server_core
                                 }
                             case NetConnectionStatus.Disconnected:
                                 {
-                                    Player Player = PlayersController.GetByID(Msg.SenderConnection.RemoteUniqueIdentifier);
-                                    PlayersController.Remove(Player);
+                                    Player Player = PlayersController.GetByNetConnection(Msg.SenderConnection);
+                                    if(Player == null)
+                                    {
+                                        Console.WriteLine("Player == null(Disconnect)");
+                                    }
                                     Console.WriteLine("Client disconnected. ID: " + Player.ID);
+                                    PlayersController.Remove(Player);
                                     Player = null;
                                     NetOutgoingMessage OutMsg = NetServer.CreateMessage();
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerDisconnected);
@@ -124,6 +129,8 @@ namespace ivmp_server_core
                                     break;
                                 }
                         }
+                        break;
+                    case NetIncomingMessageType.DebugMessage:
                         break;
                     case NetIncomingMessageType.WarningMessage:
                         break;
@@ -134,7 +141,7 @@ namespace ivmp_server_core
                             case (int)Shared.NetworkMessageType.UpdatePlayer:
                                 PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
                                 Msg.ReadAllFields(PlayerData);
-                                Player Player = PlayersController.GetByID(Msg.SenderConnection.RemoteUniqueIdentifier);
+                                Player Player = PlayersController.GetByNetConnection(Msg.SenderConnection);
                                 Player.Name = PlayerData.Name;
                                 Player.Health = PlayerData.Health;
                                 Player.Armor = PlayerData.Armor;

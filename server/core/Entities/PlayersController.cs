@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Lidgren.Network;
 
 namespace ivmp_server_core
 {
@@ -42,9 +43,14 @@ namespace ivmp_server_core
             Players.Remove(Player);
         }
 
-        public Player GetByID(long ID)
+        public Player GetByID(int ID)
         {
             return Players.Find(Player => Player.ID == ID);
+        }
+
+        public Player GetByNetConnection(NetConnection NetConnection)
+        {
+            return Players.Find(Player => Player.NetConnection == NetConnection);
         }
 
         public List<Player> GetAll()

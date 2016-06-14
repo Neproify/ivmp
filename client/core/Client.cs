@@ -69,7 +69,7 @@ namespace ivmp_client_core
 
         public void Disconnect()
         {
-            NetClient.Disconnect("Disconnect");
+            NetClient.Disconnect("Quit");
             RemotePlayersController = null;
             RemoteVehiclesController = null;
             Initialized = false;
@@ -96,7 +96,7 @@ namespace ivmp_client_core
                                 Game.Console.Print("Connecting to server.");
                                 break;
                             case NetConnectionStatus.Connected:
-                                Game.Console.Print("Connected to server. ID: " + NetClient.UniqueIdentifier);
+                                Game.Console.Print("Connected to server.");
                                 World.CarDensity = 0;
                                 World.PedDensity = 0;
                                 Game.WantedMultiplier = 0;
