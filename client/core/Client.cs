@@ -148,12 +148,14 @@ namespace ivmp_client_core
                                 }
                             case (int)Shared.NetworkMessageType.PlayerDisconnected:
                                 {
-                                    Game.Console.Print("PlayerDisconnected");
-                                    long ID = Msg.ReadInt64();
+                                    int ID = Msg.ReadInt32();
                                     RemotePlayer Player = RemotePlayersController.GetByID(ID);
-                                    RemotePlayersController.Remove(Player);
-                                    Player.Destroy();
-                                    Player = null;
+                                    if (Player != null)
+                                    {
+                                        RemotePlayersController.Remove(Player);
+                                        Player.Destroy();
+                                        Player = null;
+                                    }
                                     break;
                                 }
                             case (int)Shared.NetworkMessageType.UpdatePlayer:

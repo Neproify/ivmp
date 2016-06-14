@@ -117,11 +117,11 @@ namespace ivmp_server_core
                                     Player Player = PlayersController.GetByNetConnection(Msg.SenderConnection);
                                     Console.WriteLine("Client disconnected. ID: " + Player.ID);
                                     PlayersController.Remove(Player);
-                                    Player = null;
                                     NetOutgoingMessage OutMsg = NetServer.CreateMessage();
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerDisconnected);
-                                    OutMsg.Write(Msg.SenderConnection.RemoteUniqueIdentifier);
+                                    OutMsg.Write(Player.ID);
                                     NetServer.SendToAll(OutMsg, Msg.SenderConnection, NetDeliveryMethod.ReliableSequenced, 1);
+                                    Player = null;
                                     break;
                                 }
                         }
