@@ -62,6 +62,7 @@ namespace ivmp_client_core
             // interpolate position
             if (Vehicle.Exists())
             {
+                bool CancelInterpolation = false;
                 float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
 
                 if (StartPosition.DistanceTo(EndPosition) > 5.0f)
@@ -72,7 +73,15 @@ namespace ivmp_client_core
                 Vector3 CurrentPosition;
                 CurrentPosition = Vector3.Lerp(StartPosition, EndPosition, Progress);
 
-                Vehicle.Position = CurrentPosition;
+                if (EndPosition.DistanceTo(Vehicle.Position) <= 0.01f)
+                {
+                    CancelInterpolation = true;
+                }
+
+                if (!CancelInterpolation)
+                {
+                    Vehicle.Position = CurrentPosition;
+                }
             }
 
             // interpolate rotation

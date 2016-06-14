@@ -175,9 +175,14 @@ namespace ivmp_client_core
                                     if (PlayerData.CurrentVehicle > 0)
                                     {
                                         Player.CurrentVehicle = RemoteVehiclesController.GetByID(PlayerData.CurrentVehicle);
+                                        Player.Update();
                                     }
                                     else
                                     {
+                                        if(Player.CurrentVehicle != null)
+                                        {
+                                            Player.CurrentVehicle = null;
+                                        }
                                         Vector3 Position = new Vector3();
                                         Position.X = PlayerData.Pos_X;
                                         Position.Y = PlayerData.Pos_Y;
@@ -329,6 +334,7 @@ namespace ivmp_client_core
                             CancelThisVehicleUpdate = true;
                         }
                     }
+
                     if (CancelThisVehicleUpdate == false)
                     {
                         Vehicle.UpdateInterpolation();

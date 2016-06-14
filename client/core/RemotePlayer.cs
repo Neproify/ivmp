@@ -105,7 +105,10 @@ namespace ivmp_client_core
 
         public void UpdateInterpolation()
         {
-
+            if(CurrentVehicle != null)
+            {
+                return;
+            }
             // interpolate position
             if (Ped.Exists())
             {
@@ -141,26 +144,41 @@ namespace ivmp_client_core
 
             if (Ped.Exists())
             {
+                if(CurrentVehicle != null && !Ped.isInVehicle(CurrentVehicle.Vehicle))
+                {
+                    Ped.WarpIntoVehicle(CurrentVehicle.Vehicle, VehicleSeat.Driver);
+                }
+                else if(CurrentVehicle == null)
+                {
+                    if(Ped.isInVehicle())
+                    {
+                        Ped.LeaveVehicle();
+                    }
+                }
+
                 bool AnimationPlayed = false;
-                if (IsJumping == true && !AnimationPlayed)
+                if (!Ped.isInVehicle())
                 {
-                    AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Jump);
-                    AnimationPlayed = true;
-                }
-                if (IsRunning == true && !AnimationPlayed)
-                {
-                    AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Run);
-                    AnimationPlayed = true;
-                }
-                if (IsWalking == true && !AnimationPlayed)
-                {
-                    AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Walk);
-                    AnimationPlayed = true;
-                }
-                if (!AnimationPlayed)
-                {
-                    AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.StandStill);
-                    AnimationPlayed = true;
+                    if (IsJumping == true && !AnimationPlayed)
+                    {
+                        AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Jump);
+                        AnimationPlayed = true;
+                    }
+                    if (IsRunning == true && !AnimationPlayed)
+                    {
+                        AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Run);
+                        AnimationPlayed = true;
+                    }
+                    if (IsWalking == true && !AnimationPlayed)
+                    {
+                        AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Walk);
+                        AnimationPlayed = true;
+                    }
+                    if (!AnimationPlayed)
+                    {
+                        AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.StandStill);
+                        AnimationPlayed = true;
+                    }
                 }
             }
         }
