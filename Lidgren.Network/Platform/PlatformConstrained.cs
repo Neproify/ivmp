@@ -12,8 +12,6 @@ namespace Lidgren.Network
 		
 		static NetUtility()
 		{
-			s_randomMacBytes = new byte[8];
-			MWCRandom.Instance.NextBytes(s_randomMacBytes);
 		}
 
 		[CLSCompliant(false)]
@@ -29,9 +27,9 @@ namespace Lidgren.Network
 		public static IPAddress GetMyAddress(out IPAddress mask)
 		{
 			mask = null;
+#if UNITY_ANDROID || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_IOS || UNITY
 			try
 			{
-#if UNITY_ANDROID || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_IOS || UNITY
 				if (!(UnityEngine.Application.internetReachability == UnityEngine.NetworkReachability.NotReachable))
 				{
 					return null;
@@ -48,6 +46,11 @@ namespace Lidgren.Network
 
 		public static byte[] GetMacAddressBytes()
 		{
+			if (s_randomMacBytes == null)
+			{
+				s_randomMacBytes = new byte[8];
+				MWCRandom.Instance.NextBytes(s_randomMacBytes);
+			}
 			return s_randomMacBytes;
 		}
 
