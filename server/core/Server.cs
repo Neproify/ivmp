@@ -81,13 +81,35 @@ namespace ivmp_server_core
             Console.WriteLine("Max Players: " + MaxPlayers);
 
             Engine = new Jint.Engine();
+        }
 
-            TestPlayer = new Player();
-            TestPlayer.Name = "TestPlayer";
-            TestPlayer.Server = this;
-            PlayersController.Add(TestPlayer);
+        public void CreateTestPlayer()
+        {
+            if (TestPlayer == null)
+            {
+                TestPlayer = new Player();
+                TestPlayer.Name = "TestPlayer";
+                TestPlayer.Server = this;
+                PlayersController.Add(TestPlayer);
 
-            Console.WriteLine("Created test player. ID: " + TestPlayer.ID);
+                Console.WriteLine("Created test player. ID: " + TestPlayer.ID);
+            }
+        }
+
+        public void RemoveTestPlayer()
+        {
+            if (TestPlayer != null)
+            {
+                NetOutgoingMessage OutMsg = NetServer.CreateMessage();
+                OutMsg.Write((int)Shared.NetworkMessageType.PlayerDisconnected);
+                OutMsg.Write(TestPlayer.ID);
+                NetServer.SendToAll(OutMsg, null, NetDeliveryMethod.ReliableSequenced, 1);
+
+                PlayersController.Remove(TestPlayer);
+                TestPlayer = null;
+
+                Console.WriteLine("Removed test player.");
+            }
         }
 
         public void OnTick(object sender, ElapsedEventArgs e)
@@ -172,7 +194,6 @@ namespace ivmp_server_core
                                     Vehicle Vehicle = VehiclesController.GetByID(PlayerData.CurrentVehicle);
                                     Vehicle.Position = Position;
                                     Vehicle.Velocity = Velocity;
-                                    Console.WriteLine(Velocity.ToString());
                                     Vehicle.Rotation = Rotation;
                                     Vehicle.Driver = Player;
                                     Player.CurrentVehicle = PlayerData.CurrentVehicle;
@@ -198,40 +219,43 @@ namespace ivmp_server_core
 
                                 // Test Player
 
-                                TestPlayer.Name = "TestPlayer";
-                                TestPlayer.Health = PlayerData.Health;
-                                TestPlayer.Armor = PlayerData.Armor;
-                                Position.X = Position.X + 5;
-                                if (PlayerData.CurrentVehicle > 0)
+                                if (TestPlayer != null)
                                 {
-                                    if (PlayerData.CurrentVehicle == 1)
+                                    TestPlayer.Name = "TestPlayer";
+                                    TestPlayer.Health = PlayerData.Health;
+                                    TestPlayer.Armor = PlayerData.Armor;
+                                    Position.X = Position.X + 5;
+                                    if (PlayerData.CurrentVehicle > 0)
                                     {
-                                        PlayerData.CurrentVehicle = 2;
+                                        if (PlayerData.CurrentVehicle == 1)
+                                        {
+                                            PlayerData.CurrentVehicle = 2;
+                                        }
+                                        Vehicle Vehicle = VehiclesController.GetByID(PlayerData.CurrentVehicle);
+                                        Vehicle.Position = Position;
+                                        Vehicle.Velocity = Velocity;
+                                        Vehicle.Rotation = Rotation;
+                                        Vehicle.Driver = TestPlayer;
+                                        TestPlayer.CurrentVehicle = PlayerData.CurrentVehicle;
                                     }
-                                    Vehicle Vehicle = VehiclesController.GetByID(PlayerData.CurrentVehicle);
-                                    Vehicle.Position = Position;
-                                    Vehicle.Velocity = Velocity;
-                                    Vehicle.Rotation = Rotation;
-                                    Vehicle.Driver = TestPlayer;
-                                    TestPlayer.CurrentVehicle = PlayerData.CurrentVehicle;
-                                }
-                                else
-                                {
-                                    if (TestPlayer.CurrentVehicle > 0)
+                                    else
                                     {
-                                        Vehicle Vehicle = VehiclesController.GetByID(TestPlayer.CurrentVehicle);
-                                        Vehicle.Driver = null;
-                                        TestPlayer.CurrentVehicle = 0;
+                                        if (TestPlayer.CurrentVehicle > 0)
+                                        {
+                                            Vehicle Vehicle = VehiclesController.GetByID(TestPlayer.CurrentVehicle);
+                                            Vehicle.Driver = null;
+                                            TestPlayer.CurrentVehicle = 0;
+                                        }
+                                        TestPlayer.Position = Position;
+                                        TestPlayer.Velocity = Velocity;
+                                        TestPlayer.Heading = PlayerData.Heading;
+                                        TestPlayer.IsWalking = PlayerData.IsWalking;
+                                        TestPlayer.IsRunning = PlayerData.IsRunning;
+                                        TestPlayer.IsJumping = PlayerData.IsJumping;
+                                        TestPlayer.IsCrouching = PlayerData.IsCrouching;
+                                        TestPlayer.IsGettingIntoVehicle = PlayerData.IsGettingIntoVehicle;
+                                        TestPlayer.IsGettingOutOfVehicle = PlayerData.IsGettingOutOfVehicle;
                                     }
-                                    TestPlayer.Position = Position;
-                                    TestPlayer.Velocity = Velocity;
-                                    TestPlayer.Heading = PlayerData.Heading;
-                                    TestPlayer.IsWalking = PlayerData.IsWalking;
-                                    TestPlayer.IsRunning = PlayerData.IsRunning;
-                                    TestPlayer.IsJumping = PlayerData.IsJumping;
-                                    TestPlayer.IsCrouching = PlayerData.IsCrouching;
-                                    TestPlayer.IsGettingIntoVehicle = PlayerData.IsGettingIntoVehicle;
-                                    TestPlayer.IsGettingOutOfVehicle = PlayerData.IsGettingOutOfVehicle;
                                 }
                                 break;
                             default:

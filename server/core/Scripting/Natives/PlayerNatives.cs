@@ -39,13 +39,11 @@ namespace ivmp_server_core.Scripting.Natives
 
         public void Spawn(SharpDX.Vector3 Position, float Heading)
         {
-            System.Console.WriteLine("SpawnScripting");
             Entity.Spawn(Position, Heading);
         }
 
         public void FadeScreenIn(int Duration)
         {
-            System.Console.WriteLine("FadeScreenInScripting");
             Entity.FadeScreenIn(Duration);
         }
 

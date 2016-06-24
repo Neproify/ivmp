@@ -37,7 +37,6 @@ namespace ivmp_server_core
 
         public void Spawn(SharpDX.Vector3 Position, float Heading)
         {
-            Console.WriteLine("Spawn");
             NetOutgoingMessage Msg = Server.NetServer.CreateMessage();
             Msg.Write((int)Shared.NetworkMessageType.SpawnPlayer);
             Msg.Write(Position.X);
@@ -50,7 +49,6 @@ namespace ivmp_server_core
 
         public void FadeScreenIn(int Duration)
         {
-            Console.WriteLine("FadeScreenIn");
             NetOutgoingMessage Msg = Server.NetServer.CreateMessage();
             Msg.Write((int)Shared.NetworkMessageType.FadeScreenIn);
             Msg.Write(Duration);

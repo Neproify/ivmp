@@ -29,6 +29,14 @@ namespace ivmp_server_core
                     Server.Shutdown();
                     Running = false;
                 }
+                if(Input == "testplayer")
+                {
+                    Server.CreateTestPlayer();
+                }
+                if(Input == "removetestplayer")
+                {
+                    Server.RemoveTestPlayer();
+                }
             }
         }
     }
