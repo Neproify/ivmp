@@ -12,7 +12,7 @@ namespace Shared
 {
     public class PlayerUpdateStruct
     {
-        public long ID = 0; // only when sending to client
+        public int ID = 0; // only when sending to client
 
         public string Name = "Player";
 

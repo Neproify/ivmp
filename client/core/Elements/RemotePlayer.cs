@@ -13,25 +13,14 @@ using GTA;
 
 namespace ivmp_client_core
 {
-    public class RemotePlayer
+    public class RemotePlayer : Element
     {
         public bool Initialized = false;
 
         RemotePlayerAnimationManager AnimationManager;
 
-        public long ID;
         public string Name;
-        public Ped Ped;
         public RemoteVehicle CurrentVehicle;
-
-        public DateTime Interpolation_Start;
-        public DateTime Interpolation_End;
-        public Vector3 StartPosition;
-        public Vector3 EndPosition;
-        public Vector3 StartVelocity;
-        public Vector3 EndVelocity;
-        public float StartHeading;
-        public float EndHeading;
 
         public bool IsWalking;
         public bool IsRunning;
@@ -42,71 +31,36 @@ namespace ivmp_client_core
 
         public RemotePlayer()
         {
-            Ped = World.CreatePed(Vector3.Zero);
-            Ped.BlockGestures = true;
-            Ped.BlockPermanentEvents = true;
-            Ped.BlockWeaponSwitching = true;
-            Ped.PreventRagdoll = true;
+            GameReference = World.CreatePed(Vector3.Zero);
+            GameReference.BlockGestures = true;
+            GameReference.BlockPermanentEvents = true;
+            GameReference.BlockWeaponSwitching = true;
+            GameReference.PreventRagdoll = true;
             AnimationManager = new RemotePlayerAnimationManager(this);
             Initialized = true;
         }
 
-        public void Destroy()
-        {
-            if (Ped.Exists())
-            {
-                Ped.Delete();
-            }
-        }
-
-        public void SetPosition(Vector3 Position, bool Instant)
-        {
-            StartPosition = Ped.Position;
-            if (Instant == true)
-            {
-                StartPosition = Position;
-            }
-            EndPosition = Position;
-        }
-
-        public void SetPosition(Vector3 Position)
-        {
-            SetPosition(Position, false);
-        }
-
-        public void SetVelocity(Vector3 Velocity)
-        {
-            StartVelocity = Ped.Velocity;
-            EndVelocity = Velocity;
-        }
-
-        public void SetHeading(float Heading)
-        {
-            StartHeading = Ped.Heading;
-            EndHeading = Heading;
-        }
-
         public void SetHealth(int Health)
         {
-            if (Ped.Exists() == true)
+            if (GameReference.Exists() == true)
             {
-                Ped.Health = Health;
+                GameReference.Health = Health;
             }
         }
 
         public void SetArmor(int Armor)
         {
-            if (Ped.Exists() == true)
+            if (GameReference.Exists() == true)
             {
-                Ped.Armor = Armor;
+                GameReference.Armor = Armor;
             }
         }
 
         public Vector3 GetPosition()
         {
-            if (Ped.Exists() == true)
+            if (GameReference.Exists() == true)
             {
-                return Ped.Position;
+                return GameReference.Position;
             }
             return Vector3.Zero;
         }
@@ -117,29 +71,26 @@ namespace ivmp_client_core
             {
                 return;
             }
-            if (Ped.Exists())
+
+            if (GameReference.Exists())
             {
                 // interpolate position
                 float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
 
-                Vector3 GamePosition = Ped.Position;
+                Vector3 GamePosition = GameReference.Position;
                 GamePosition.Z -= 1.0f;
 
                 if (GamePosition.DistanceTo(EndPosition) > 5.0f)
                 {
-                    Ped.Position = EndPosition;
+                    GameReference.Position = EndPosition;
                 }
 
-                //Vector3 CurrentPosition;
-                //CurrentPosition = Vector3.Lerp(StartPosition, EndPosition, Progress);
-
-                //Ped.Position = CurrentPosition;
                 // Interpolate velocity
 
                 Vector3 CurrentVelocity;
                 CurrentVelocity = Vector3.Lerp(StartVelocity, EndVelocity, Progress);
 
-                Ped.Velocity = CurrentVelocity;
+                GameReference.Velocity = CurrentVelocity;
 
                 // Interpolate heading
 
@@ -148,7 +99,7 @@ namespace ivmp_client_core
                 Vector2 EndHeading = new Vector2(this.EndHeading, 0);
                 CurrentHeading = Vector2.Lerp(StartHeading, EndHeading, Progress).X;
 
-                Ped.Heading = CurrentHeading;
+                GameReference.Heading = CurrentHeading;
             }
         }
 
@@ -157,22 +108,22 @@ namespace ivmp_client_core
             if (!Initialized)
                 return;
 
-            if (Ped.Exists())
+            if (GameReference.Exists())
             {
-                if (CurrentVehicle != null && !Ped.isInVehicle(CurrentVehicle.Vehicle))
+                if (CurrentVehicle != null && !GameReference.isInVehicle(CurrentVehicle.GameReference))
                 {
-                    Ped.WarpIntoVehicle(CurrentVehicle.Vehicle, VehicleSeat.Driver);
+                    GameReference.WarpIntoVehicle(CurrentVehicle.GameReference, VehicleSeat.Driver);
                 }
                 else if (CurrentVehicle == null)
                 {
-                    if (Ped.isInVehicle())
+                    if (GameReference.isInVehicle())
                     {
-                        Ped.LeaveVehicle();
+                        GameReference.LeaveVehicle();
                     }
                 }
 
                 bool AnimationPlayed = false;
-                if (!Ped.isInVehicle())
+                if (!GameReference.isInVehicle())
                 {
                     if (IsCrouching == true && !AnimationPlayed)
                     {

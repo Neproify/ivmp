@@ -195,6 +195,7 @@ namespace ivmp_server_core
                                     Vehicle.Position = Position;
                                     Vehicle.Velocity = Velocity;
                                     Vehicle.Rotation = Rotation;
+                                    Vehicle.Heading = PlayerData.Heading;
                                     Vehicle.Driver = Player;
                                     Player.CurrentVehicle = PlayerData.CurrentVehicle;
                                 }
@@ -235,6 +236,7 @@ namespace ivmp_server_core
                                         Vehicle.Position = Position;
                                         Vehicle.Velocity = Velocity;
                                         Vehicle.Rotation = Rotation;
+                                        Vehicle.Heading = PlayerData.Heading;
                                         Vehicle.Driver = TestPlayer;
                                         TestPlayer.CurrentVehicle = PlayerData.CurrentVehicle;
                                     }
@@ -326,6 +328,8 @@ namespace ivmp_server_core
                 VehicleData.Rot_Y = Vehicle.Rotation.Y;
                 VehicleData.Rot_Z = Vehicle.Rotation.Z;
                 VehicleData.Rot_A = Vehicle.Rotation.W;
+
+                VehicleData.Heading = Vehicle.Heading;
 
                 Msg.Write((int)Shared.NetworkMessageType.UpdateVehicle);
                 Msg.WriteAllFields(VehicleData);

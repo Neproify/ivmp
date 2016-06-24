@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core.Scripting.Natives
 {
-    public class Player : EntityNatives
+    public class Player : ElementNatives
     {
         public string Name
         {
             get
             {
-                return Entity.Name;
+                return Element.Name;
             }
         }
 
@@ -20,7 +20,7 @@ namespace ivmp_server_core.Scripting.Natives
         {
             get
             {
-                return Entity.IsSpawned;
+                return Element.IsSpawned;
             }
         }
 
@@ -28,28 +28,28 @@ namespace ivmp_server_core.Scripting.Natives
         {
             get
             {
-                return new Scripting.Natives.Vehicle(Entity.CurrentVehicle);
+                return new Scripting.Natives.Vehicle(Element.CurrentVehicle);
             }
         }
 
         public Player(ivmp_server_core.Player ServerPlayer)
         {
-            Entity = ServerPlayer;
+            Element = ServerPlayer;
         }
 
         public void Spawn(SharpDX.Vector3 Position, float Heading)
         {
-            Entity.Spawn(Position, Heading);
+            Element.Spawn(Position, Heading);
         }
 
         public void FadeScreenIn(int Duration)
         {
-            Entity.FadeScreenIn(Duration);
+            Element.FadeScreenIn(Duration);
         }
 
         public void FadeScreenOut(int Duration)
         {
-            Entity.FadeScreenOut(Duration);
+            Element.FadeScreenOut(Duration);
         }
     }
 }

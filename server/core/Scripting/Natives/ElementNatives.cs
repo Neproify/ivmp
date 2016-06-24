@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core.Scripting.Natives
 {
-    public class EntityNatives
+    public class ElementNatives
     {
-        public dynamic Entity;
+        public dynamic Element;
 
         public SharpDX.Vector3 Position
         {
             get
             {
-                return Entity.Position;
+                return Element.Position;
             }
             set
             {
-                Entity.Position = value;
+                Element.Position = value;
             }
         }
 
@@ -26,7 +26,7 @@ namespace ivmp_server_core.Scripting.Natives
         {
             get
             {
-                return Entity.Velocity;
+                return Element.Velocity;
             }
         }
 
@@ -34,11 +34,11 @@ namespace ivmp_server_core.Scripting.Natives
         {
             get
             {
-                return Entity.Rotation;
+                return Element.Rotation;
             }
             set
             {
-                Entity.Rotation = value;
+                Element.Rotation = value;
             }
         }
     }

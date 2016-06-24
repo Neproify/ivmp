@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core
 {
-    public class Vehicle : Entity
+    public class Vehicle : Element
     {
         public Player Driver = null;
 
@@ -23,6 +23,7 @@ namespace ivmp_server_core
 
             this.Rotation = SharpDX.Quaternion.Zero;
             this.Velocity = SharpDX.Vector3.Zero;
+            this.Heading = 0f;
         }
     }
 }

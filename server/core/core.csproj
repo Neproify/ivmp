@@ -57,16 +57,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\Player.cs" />
-    <Compile Include="Entities\PlayersController.cs" />
+    <Compile Include="Elements\Element.cs" />
+    <Compile Include="Elements\Player.cs" />
+    <Compile Include="Elements\PlayersController.cs" />
+    <Compile Include="Elements\Vehicle.cs" />
+    <Compile Include="Elements\VehiclesController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripting\Event.cs" />
     <Compile Include="Scripting\EventHandler.cs" />
     <Compile Include="Scripting\EventsManager.cs" />
     <Compile Include="Scripting\Natives\ConsoleNatives.cs" />
-    <Compile Include="Scripting\Natives\EntityNatives.cs" />
+    <Compile Include="Scripting\Natives\ElementNatives.cs" />
     <Compile Include="Scripting\Natives\EventNatives.cs" />
     <Compile Include="Scripting\Natives\PlayerNatives.cs" />
     <Compile Include="Scripting\Natives\VehicleNatives.cs" />
@@ -74,12 +76,11 @@
     <Compile Include="Scripting\ResourcesManager.cs" />
     <Compile Include="Scripting\Script.cs" />
     <Compile Include="Server.cs" />
-    <Compile Include="Entities\Vehicle.cs" />
-    <Compile Include="Entities\VehiclesController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\..\Shared\Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

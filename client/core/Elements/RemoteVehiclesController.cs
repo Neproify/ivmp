@@ -41,7 +41,7 @@ namespace ivmp_client_core
 
         public RemoteVehicle GetByGame(Vehicle Vehicle)
         {
-            return Vehicles.Find(x => x.Vehicle == Vehicle);
+            return Vehicles.Find(x => x.GameReference == Vehicle);
         }
     }
 }

@@ -13,7 +13,7 @@ using Lidgren.Network;
 
 namespace ivmp_server_core
 {
-    public class Player : Entity
+    public class Player : Element
     {
         public NetConnection NetConnection;
 
@@ -25,8 +25,6 @@ namespace ivmp_server_core
 
         public int Health;
         public int Armor;
-
-        public float Heading;
 
         public bool IsWalking;
         public bool IsRunning;

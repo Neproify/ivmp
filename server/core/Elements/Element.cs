@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core
 {
-    public class Entity
+    public class Element
     {
         public Server Server;
 
@@ -19,5 +19,7 @@ namespace ivmp_server_core
         public SharpDX.Vector3 Velocity;
 
         public SharpDX.Quaternion Rotation;
+
+        public float Heading;
     }
 }

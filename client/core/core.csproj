@@ -48,12 +48,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="Elements\Element.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RemotePlayer.cs" />
-    <Compile Include="RemotePlayerAnimationManager.cs" />
-    <Compile Include="RemotePlayersController.cs" />
-    <Compile Include="RemoteVehicle.cs" />
-    <Compile Include="RemoteVehiclesController.cs" />
+    <Compile Include="Elements\RemotePlayer.cs" />
+    <Compile Include="Elements\RemotePlayerAnimationManager.cs" />
+    <Compile Include="Elements\RemotePlayersController.cs" />
+    <Compile Include="Elements\RemoteVehicle.cs" />
+    <Compile Include="Elements\RemoteVehiclesController.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ScriptHookDotNet\ScriptHookDotNet.vcxproj">

@@ -28,5 +28,7 @@ namespace Shared
         public float Rot_Y;
         public float Rot_Z;
         public float Rot_A;
+
+        public float Heading;
     }
 }

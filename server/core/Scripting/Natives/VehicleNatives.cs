@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core.Scripting.Natives
 {
-    public class Vehicle : EntityNatives
+    public class Vehicle : ElementNatives
     {
         public VehiclesController VehiclesController;
 
@@ -20,19 +20,19 @@ namespace ivmp_server_core.Scripting.Natives
         {
             get
             {
-                return Entity.Driver;
+                return Element.Driver;
             }
         }
 
         public Vehicle(string Model, SharpDX.Vector3 Position, VehiclesController VehiclesController)
         {
-            Entity = new ivmp_server_core.Vehicle(Model, Position);
-            VehiclesController.Add(Entity);
+            Element = new ivmp_server_core.Vehicle(Model, Position);
+            VehiclesController.Add(Element);
         }
 
         public Vehicle(int ID)
         {
-            Entity = VehiclesController.GetByID(ID);
+            Element = VehiclesController.GetByID(ID);
         }
     }
 }

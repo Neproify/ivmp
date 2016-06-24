@@ -253,6 +253,7 @@ namespace ivmp_client_core
                                     Velocity.Y = VehicleData.Rot_Y;
                                     Velocity.Z = VehicleData.Rot_Z;
                                     Vehicle.SetVelocity(Velocity);
+                                    Vehicle.SetHeading(VehicleData.Heading);
                                     Quaternion Rotation = new Quaternion();
                                     Rotation.X = VehicleData.Rot_X;
                                     Rotation.Y = VehicleData.Rot_Y;
@@ -349,7 +350,7 @@ namespace ivmp_client_core
                     bool CancelThisVehicleUpdate = false;
                     if (Game.LocalPlayer.Character.isInVehicle())
                     {
-                        if (Game.LocalPlayer.Character.CurrentVehicle == Vehicle.Vehicle)
+                        if (Game.LocalPlayer.Character.CurrentVehicle == Vehicle.GameReference)
                         {
                             CancelThisVehicleUpdate = true;
                         }

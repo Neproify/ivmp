@@ -37,60 +37,60 @@ namespace ivmp_client_core
 
         public void PlayAnimation(Shared.RemotePlayerAnimations Animation)
         {
-            if (!Player.Ped.Exists() || !Initialized)
+            if (!Player.GameReference.Exists() || !Initialized)
             {
                 return;
             }
             if (Animation != CurrentAnimation)
             {
                 CurrentAnimation = Animation;
-                if (Animation == Shared.RemotePlayerAnimations.RunTo && Player.Ped.Position.DistanceTo(Player.GetPosition()) > 1.0f)
+                if (Animation == Shared.RemotePlayerAnimations.RunTo && Player.GameReference.Position.DistanceTo(Player.GetPosition()) > 1.0f)
                 {
                     if (LastRunToCord.DistanceTo(Player.GetPosition()) > 1.0f)
                     {
                         Vector3 Position = Player.GetPosition();
-                        Player.Ped.Task.RunTo(Position);
+                        Player.GameReference.Task.RunTo(Position);
                         LastRunToCord = Position;
                     }
                     return;
                 }
-                if (Animation == Shared.RemotePlayerAnimations.WalkTo && Player.Ped.Position.DistanceTo(Player.GetPosition()) > 1.0f)
+                if (Animation == Shared.RemotePlayerAnimations.WalkTo && Player.GameReference.Position.DistanceTo(Player.GetPosition()) > 1.0f)
                 {
                     if (LastWalkToCord.DistanceTo(Player.GetPosition()) > 1.0f)
                     {
                         Vector3 Position = Player.GetPosition();
-                        Player.Ped.Task.GoTo(Position);
+                        Player.GameReference.Task.GoTo(Position);
                         LastWalkToCord = Position;
                     }
                     return;
                 }
 
-                Player.Ped.Task.AlwaysKeepTask = true;
+                Player.GameReference.Task.AlwaysKeepTask = true;
                 switch (Animation)
                 {
                     case Shared.RemotePlayerAnimations.Run:
                         {
-                            Player.Ped.Animation.Play(WalkAnimations, "sprint", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
+                            Player.GameReference.Animation.Play(WalkAnimations, "sprint", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
                             break;
                         }
                     case Shared.RemotePlayerAnimations.Walk:
                         {
-                            Player.Ped.Animation.Play(WalkAnimations, "walk", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
+                            Player.GameReference.Animation.Play(WalkAnimations, "walk", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
                             break;
                         }
                     case Shared.RemotePlayerAnimations.StandStill:
                         {
-                            Player.Ped.Animation.Play(WalkAnimations, "idle", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
+                            Player.GameReference.Animation.Play(WalkAnimations, "idle", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
                             break;
                         }
                     case Shared.RemotePlayerAnimations.Jump:
                         {
-                            GTA.Native.Function.Call("TASK_JUMP", Player.Ped, 1);
+                            GTA.Native.Function.Call("TASK_JUMP", Player.GameReference, 1);
                             break;
                         }
                     case Shared.RemotePlayerAnimations.Crouch:
                         {
-                            Player.Ped.Animation.Play(CrouchAnimations, "wstart", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
+                            Player.GameReference.Animation.Play(CrouchAnimations, "wstart", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
                             break;
                         }
                 }
