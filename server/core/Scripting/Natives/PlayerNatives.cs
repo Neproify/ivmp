@@ -8,6 +8,30 @@ namespace ivmp_server_core.Scripting.Natives
 {
     public class Player : EntityNatives
     {
+        public string Name
+        {
+            get
+            {
+                return Entity.Name;
+            }
+        }
+
+        public bool IsSpawned
+        {
+            get
+            {
+                return Entity.IsSpawned;
+            }
+        }
+
+        public Scripting.Natives.Vehicle Vehicle
+        {
+            get
+            {
+                return new Scripting.Natives.Vehicle(Entity.CurrentVehicle);
+            }
+        }
+
         public Player(ivmp_server_core.Player ServerPlayer)
         {
             Entity = ServerPlayer;

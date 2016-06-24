@@ -16,6 +16,14 @@ namespace ivmp_server_core.Scripting.Natives
     {
         public VehiclesController VehiclesController;
 
+        public ivmp_server_core.Player Driver
+        {
+            get
+            {
+                return Entity.Driver;
+            }
+        }
+
         public Vehicle(string Model, SharpDX.Vector3 Position, VehiclesController VehiclesController)
         {
             Entity = new ivmp_server_core.Vehicle(Model, Position);

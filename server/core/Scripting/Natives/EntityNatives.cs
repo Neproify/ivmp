@@ -22,6 +22,14 @@ namespace ivmp_server_core.Scripting.Natives
             }
         }
 
+        public SharpDX.Vector3 Velocity
+        {
+            get
+            {
+                return Entity.Velocity;
+            }
+        }
+
         public SharpDX.Quaternion Rotation
         {
             get
