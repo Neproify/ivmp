@@ -28,12 +28,17 @@ namespace ivmp_client_core
         public DateTime Interpolation_End;
         public Vector3 StartPosition;
         public Vector3 EndPosition;
-        public float Start_Heading;
-        public float End_Heading;
+        public Vector3 StartVelocity;
+        public Vector3 EndVelocity;
+        public float StartHeading;
+        public float EndHeading;
 
         public bool IsWalking;
         public bool IsRunning;
         public bool IsJumping;
+        public bool IsCrouching;
+        public bool IsGettingIntoVehicle;
+        public bool IsGettingOutOfVehicle;
 
         public RemotePlayer()
         {
@@ -56,13 +61,10 @@ namespace ivmp_client_core
 
         public void SetPosition(Vector3 Position, bool Instant)
         {
+            StartPosition = Ped.Position;
             if (Instant == true)
             {
                 StartPosition = Position;
-            }
-            else
-            {
-                StartPosition = EndPosition;
             }
             EndPosition = Position;
         }
@@ -72,15 +74,21 @@ namespace ivmp_client_core
             SetPosition(Position, false);
         }
 
+        public void SetVelocity(Vector3 Velocity)
+        {
+            StartVelocity = Ped.Velocity;
+            EndVelocity = Velocity;
+        }
+
         public void SetHeading(float Heading)
         {
-            Start_Heading = End_Heading;
-            End_Heading = Heading;
+            StartHeading = Ped.Heading;
+            EndHeading = Heading;
         }
 
         public void SetHealth(int Health)
         {
-            if(Ped.Exists() == true)
+            if (Ped.Exists() == true)
             {
                 Ped.Health = Health;
             }
@@ -88,7 +96,7 @@ namespace ivmp_client_core
 
         public void SetArmor(int Armor)
         {
-            if(Ped.Exists() == true)
+            if (Ped.Exists() == true)
             {
                 Ped.Armor = Armor;
             }
@@ -96,7 +104,7 @@ namespace ivmp_client_core
 
         public Vector3 GetPosition()
         {
-            if(Ped.Exists() == true)
+            if (Ped.Exists() == true)
             {
                 return Ped.Position;
             }
@@ -105,32 +113,39 @@ namespace ivmp_client_core
 
         public void UpdateInterpolation()
         {
-            if(CurrentVehicle != null)
+            if (CurrentVehicle != null)
             {
                 return;
             }
-            // interpolate position
             if (Ped.Exists())
             {
+                // interpolate position
                 float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
 
-                if (StartPosition.DistanceTo(EndPosition) > 5.0f)
+                Vector3 GamePosition = Ped.Position;
+                GamePosition.Z -= 1.0f;
+
+                if (GamePosition.DistanceTo(EndPosition) > 5.0f)
                 {
-                    SetPosition(EndPosition, true);
+                    Ped.Position = EndPosition;
                 }
 
-                Vector3 CurrentPosition;
-                CurrentPosition = Vector3.Lerp(StartPosition, EndPosition, Progress);
+                //Vector3 CurrentPosition;
+                //CurrentPosition = Vector3.Lerp(StartPosition, EndPosition, Progress);
 
-                Ped.Position = CurrentPosition;
-            }
-            // interpolate heading
-            if (Ped.Exists())
-            {
-                float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
+                //Ped.Position = CurrentPosition;
+                // Interpolate velocity
+
+                Vector3 CurrentVelocity;
+                CurrentVelocity = Vector3.Lerp(StartVelocity, EndVelocity, Progress);
+
+                Ped.Velocity = CurrentVelocity;
+
+                // Interpolate heading
+
                 float CurrentHeading;
-                Vector2 StartHeading = new Vector2(Start_Heading, 0);
-                Vector2 EndHeading = new Vector2(End_Heading, 0);
+                Vector2 StartHeading = new Vector2(this.StartHeading, 0);
+                Vector2 EndHeading = new Vector2(this.EndHeading, 0);
                 CurrentHeading = Vector2.Lerp(StartHeading, EndHeading, Progress).X;
 
                 Ped.Heading = CurrentHeading;
@@ -144,13 +159,13 @@ namespace ivmp_client_core
 
             if (Ped.Exists())
             {
-                if(CurrentVehicle != null && !Ped.isInVehicle(CurrentVehicle.Vehicle))
+                if (CurrentVehicle != null && !Ped.isInVehicle(CurrentVehicle.Vehicle))
                 {
                     Ped.WarpIntoVehicle(CurrentVehicle.Vehicle, VehicleSeat.Driver);
                 }
-                else if(CurrentVehicle == null)
+                else if (CurrentVehicle == null)
                 {
-                    if(Ped.isInVehicle())
+                    if (Ped.isInVehicle())
                     {
                         Ped.LeaveVehicle();
                     }
@@ -159,6 +174,11 @@ namespace ivmp_client_core
                 bool AnimationPlayed = false;
                 if (!Ped.isInVehicle())
                 {
+                    if (IsCrouching == true && !AnimationPlayed)
+                    {
+                        AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Crouch);
+                        AnimationPlayed = true;
+                    }
                     if (IsJumping == true && !AnimationPlayed)
                     {
                         AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Jump);

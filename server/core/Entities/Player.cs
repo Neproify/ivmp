@@ -31,15 +31,20 @@ namespace ivmp_server_core
         public int Armor;
 
         public SharpDX.Vector3 Position;
+        public SharpDX.Vector3 Velocity;
 
         public float Heading;
 
         public bool IsWalking;
         public bool IsRunning;
         public bool IsJumping;
-        
+        public bool IsCrouching;
+        public bool IsGettingIntoVehicle;
+        public bool IsGettingOutOfVehicle;
+
         public void Spawn(SharpDX.Vector3 Position, float Heading)
         {
+            Console.WriteLine("Spawn");
             NetOutgoingMessage Msg = Server.NetServer.CreateMessage();
             Msg.Write((int)Shared.NetworkMessageType.SpawnPlayer);
             Msg.Write(Position.X);
@@ -52,6 +57,7 @@ namespace ivmp_server_core
 
         public void FadeScreenIn(int Duration)
         {
+            Console.WriteLine("FadeScreenIn");
             NetOutgoingMessage Msg = Server.NetServer.CreateMessage();
             Msg.Write((int)Shared.NetworkMessageType.FadeScreenIn);
             Msg.Write(Duration);

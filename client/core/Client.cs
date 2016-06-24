@@ -133,6 +133,7 @@ namespace ivmp_client_core
                                 break;
                             case NetConnectionStatus.Disconnected:
                                 Game.Console.Print("Disconnected from server.");
+                                Game.FadeScreenIn(500);
                                 break;
                         }
                         break;
@@ -187,11 +188,17 @@ namespace ivmp_client_core
                                         Position.X = PlayerData.Pos_X;
                                         Position.Y = PlayerData.Pos_Y;
                                         Position.Z = PlayerData.Pos_Z - 1.0f;
+                                        Vector3 Velocity = new Vector3();
+                                        Velocity.X = PlayerData.Vel_X;
+                                        Velocity.Y = PlayerData.Vel_Y;
+                                        Velocity.Z = PlayerData.Vel_Z;
                                         Player.SetPosition(Position);
+                                        Player.SetVelocity(Velocity);
                                         Player.SetHeading(PlayerData.Heading);
                                         Player.IsWalking = PlayerData.IsWalking;
                                         Player.IsRunning = PlayerData.IsRunning;
                                         Player.IsJumping = PlayerData.IsJumping;
+                                        Player.IsCrouching = PlayerData.IsCrouching;
 
                                         Player.Interpolation_Start = DateTime.Now;
                                         Player.Interpolation_End = DateTime.Now.AddMilliseconds((double)Shared.Settings.TickRate).AddMilliseconds(NetClient.ServerConnection.AverageRoundtripTime / 1000);
@@ -241,6 +248,11 @@ namespace ivmp_client_core
                                     Position.Y = VehicleData.Pos_Y;
                                     Position.Z = VehicleData.Pos_Z;
                                     Vehicle.SetPosition(Position);
+                                    Vector3 Velocity = new Vector3();
+                                    Velocity.X = VehicleData.Rot_X;
+                                    Velocity.Y = VehicleData.Rot_Y;
+                                    Velocity.Z = VehicleData.Rot_Z;
+                                    Vehicle.SetVelocity(Velocity);
                                     Quaternion Rotation = new Quaternion();
                                     Rotation.X = VehicleData.Rot_X;
                                     Rotation.Y = VehicleData.Rot_Y;
@@ -280,6 +292,9 @@ namespace ivmp_client_core
                     PlayerData.Pos_X = CurrentVehicle.Position.X;
                     PlayerData.Pos_Y = CurrentVehicle.Position.Y;
                     PlayerData.Pos_Z = CurrentVehicle.Position.Z;
+                    PlayerData.Vel_X = CurrentVehicle.Velocity.X;
+                    PlayerData.Vel_Y = CurrentVehicle.Velocity.Y;
+                    PlayerData.Vel_Z = CurrentVehicle.Velocity.Z;
                     PlayerData.Rot_X = CurrentVehicle.RotationQuaternion.X;
                     PlayerData.Rot_Y = CurrentVehicle.RotationQuaternion.Y;
                     PlayerData.Rot_Z = CurrentVehicle.RotationQuaternion.Z;
@@ -287,9 +302,13 @@ namespace ivmp_client_core
                 }
                 else
                 {
+                    Vector3 PlayerVel = Game.LocalPlayer.Character.Velocity;
                     PlayerData.Pos_X = PlayerPos.X;
                     PlayerData.Pos_Y = PlayerPos.Y;
                     PlayerData.Pos_Z = PlayerPos.Z;
+                    PlayerData.Vel_X = PlayerVel.X;
+                    PlayerData.Vel_Y = PlayerVel.Y;
+                    PlayerData.Vel_Z = PlayerVel.Z;
                     PlayerData.Heading = PlayerHeading;
                     PlayerData.IsWalking = Game.isGameKeyPressed(GameKey.MoveBackward) ||
                         Game.isGameKeyPressed(GameKey.MoveForward) ||
@@ -297,6 +316,7 @@ namespace ivmp_client_core
                         Game.isGameKeyPressed(GameKey.MoveRight);
                     PlayerData.IsRunning = Game.isGameKeyPressed(GameKey.Sprint);
                     PlayerData.IsJumping = Game.isGameKeyPressed(GameKey.Jump);
+                    PlayerData.IsCrouching = Game.isGameKeyPressed(GameKey.Crouch);
                 }
                 OutMsg.Write((int)NetworkMessageType.UpdatePlayer);
                 OutMsg.WriteAllFields(PlayerData);

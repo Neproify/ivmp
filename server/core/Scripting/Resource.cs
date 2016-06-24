@@ -61,6 +61,7 @@ namespace ivmp_server_core.Scripting
             foreach(var Script in Scripts)
             {
                 Script.Execute();
+                Server.EventsManager.GetEvent("OnResourceStart").Trigger();
             }
         }
     }

@@ -18,6 +18,7 @@ namespace ivmp_client_core
         public bool Initialized = false;
 
         AnimationSet WalkAnimations;
+        AnimationSet CrouchAnimations;
         RemotePlayer Player;
         Shared.RemotePlayerAnimations CurrentAnimation;
         Vector3 LastRunToCord;
@@ -27,6 +28,7 @@ namespace ivmp_client_core
         {
             this.Player = Player;
             WalkAnimations = new AnimationSet("move_m@casual");
+            CrouchAnimations = new AnimationSet("move_crouch");
             CurrentAnimation = (int)Shared.RemotePlayerAnimations.StandStill;
             LastRunToCord = Vector3.Zero;
             LastWalkToCord = Vector3.Zero;
@@ -35,14 +37,14 @@ namespace ivmp_client_core
 
         public void PlayAnimation(Shared.RemotePlayerAnimations Animation)
         {
-            if(!Player.Ped.Exists() || !Initialized)
+            if (!Player.Ped.Exists() || !Initialized)
             {
                 return;
             }
-            if(Animation != CurrentAnimation)
+            if (Animation != CurrentAnimation)
             {
                 CurrentAnimation = Animation;
-                if(Animation == Shared.RemotePlayerAnimations.RunTo && Player.Ped.Position.DistanceTo(Player.GetPosition()) > 1.0f)
+                if (Animation == Shared.RemotePlayerAnimations.RunTo && Player.Ped.Position.DistanceTo(Player.GetPosition()) > 1.0f)
                 {
                     if (LastRunToCord.DistanceTo(Player.GetPosition()) > 1.0f)
                     {
@@ -84,6 +86,11 @@ namespace ivmp_client_core
                     case Shared.RemotePlayerAnimations.Jump:
                         {
                             GTA.Native.Function.Call("TASK_JUMP", Player.Ped, 1);
+                            break;
+                        }
+                    case Shared.RemotePlayerAnimations.Crouch:
+                        {
+                            Player.Ped.Animation.Play(CrouchAnimations, "wstart", 1.0f, AnimationFlags.Unknown01 | AnimationFlags.Unknown05);
                             break;
                         }
                 }

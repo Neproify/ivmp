@@ -29,12 +29,17 @@ namespace ivmp_server_core
         public PlayersController PlayersController;
         public VehiclesController VehiclesController;
         public Scripting.ResourcesManager ResourcesManager;
+        public Scripting.EventsManager EventsManager;
+
+        public Jint.Engine Engine;
+
+        public Player TestPlayer;
 
         public Server()
         {
             Instance = this;
             TickRate = Shared.Settings.TickRate;
-            if(!System.IO.File.Exists("serverconfig.xml"))
+            if (!System.IO.File.Exists("serverconfig.xml"))
             {
                 Console.WriteLine("Config file not found...");
                 System.Threading.Thread.Sleep(5000);
@@ -58,9 +63,10 @@ namespace ivmp_server_core
             VehiclesController = new VehiclesController();
             ResourcesManager = new Scripting.ResourcesManager();
             ResourcesManager.Server = Instance;
+            EventsManager = new Scripting.EventsManager();
 
             // load resources
-            foreach(XmlNode Resource in Resources)
+            foreach (XmlNode Resource in Resources)
             {
                 ResourcesManager.Load(Resource.Attributes["Name"].InnerText);
                 ResourcesManager.Start(Resource.Attributes["Name"].InnerText);
@@ -73,6 +79,15 @@ namespace ivmp_server_core
             tick.Start();
             Console.WriteLine("Started game server on Port " + Port);
             Console.WriteLine("Max Players: " + MaxPlayers);
+
+            Engine = new Jint.Engine();
+
+            TestPlayer = new Player();
+            TestPlayer.Name = "TestPlayer";
+            TestPlayer.Server = this;
+            PlayersController.Add(TestPlayer);
+
+            Console.WriteLine("Created test player. ID: " + TestPlayer.ID);
         }
 
         public void OnTick(object sender, ElapsedEventArgs e)
@@ -84,7 +99,7 @@ namespace ivmp_server_core
                 {
                     case NetIncomingMessageType.ConnectionApproval:
                         int Version = Msg.ReadInt32();
-                        if(Version == Shared.Settings.NetworkVersion)
+                        if (Version == Shared.Settings.NetworkVersion)
                         {
                             Msg.SenderConnection.Approve();
                         }
@@ -103,24 +118,22 @@ namespace ivmp_server_core
                                     Player.Server = this;
                                     Player.NetConnection = Msg.SenderConnection;
                                     PlayersController.Add(Player);
-                                    Console.WriteLine("Client connected. ID: " + Player.ID);
                                     NetOutgoingMessage OutMsg = NetServer.CreateMessage();
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerConnected);
                                     OutMsg.Write(Player.ID);
                                     NetServer.SendToAll(OutMsg, Msg.SenderConnection, NetDeliveryMethod.ReliableUnordered, 1);
-                                    Player.Spawn(new SharpDX.Vector3(2783.87f, 426.42f, 5.82f), 45.0f);
-                                    Player.FadeScreenIn(1000);
+                                    EventsManager.GetEvent("OnPlayerConnect").Trigger(Jint.Native.JsValue.FromObject(Engine, new Scripting.Natives.Player(Player)));
                                     break;
                                 }
                             case NetConnectionStatus.Disconnected:
                                 {
                                     Player Player = PlayersController.GetByNetConnection(Msg.SenderConnection);
-                                    Console.WriteLine("Client disconnected. ID: " + Player.ID);
                                     PlayersController.Remove(Player);
                                     NetOutgoingMessage OutMsg = NetServer.CreateMessage();
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerDisconnected);
                                     OutMsg.Write(Player.ID);
                                     NetServer.SendToAll(OutMsg, Msg.SenderConnection, NetDeliveryMethod.ReliableSequenced, 1);
+                                    EventsManager.GetEvent("OnPlayerDisconnect").Trigger(Jint.Native.JsValue.FromObject(Engine, new Scripting.Natives.Player(Player)));
                                     Player = null;
                                     break;
                                 }
@@ -132,7 +145,7 @@ namespace ivmp_server_core
                         break;
                     case NetIncomingMessageType.Data:
                         int MsgType = Msg.ReadInt32();
-                        switch(MsgType)
+                        switch (MsgType)
                         {
                             case (int)Shared.NetworkMessageType.UpdatePlayer:
                                 PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
@@ -145,6 +158,10 @@ namespace ivmp_server_core
                                 Position.X = PlayerData.Pos_X;
                                 Position.Y = PlayerData.Pos_Y;
                                 Position.Z = PlayerData.Pos_Z;
+                                SharpDX.Vector3 Velocity = new SharpDX.Vector3();
+                                Velocity.X = PlayerData.Vel_X;
+                                Velocity.Y = PlayerData.Vel_Y;
+                                Velocity.Z = PlayerData.Vel_Z;
                                 SharpDX.Quaternion Rotation = new SharpDX.Quaternion();
                                 Rotation.X = PlayerData.Rot_X;
                                 Rotation.Y = PlayerData.Rot_Y;
@@ -154,23 +171,67 @@ namespace ivmp_server_core
                                 {
                                     Vehicle Vehicle = VehiclesController.GetByID(PlayerData.CurrentVehicle);
                                     Vehicle.Position = Position;
+                                    Vehicle.Velocity = Velocity;
+                                    Console.WriteLine(Velocity.ToString());
                                     Vehicle.Rotation = Rotation;
                                     Vehicle.Driver = Player;
                                     Player.CurrentVehicle = PlayerData.CurrentVehicle;
                                 }
                                 else
                                 {
-                                    if(Player.CurrentVehicle > 0)
+                                    if (Player.CurrentVehicle > 0)
                                     {
                                         Vehicle Vehicle = VehiclesController.GetByID(Player.CurrentVehicle);
                                         Vehicle.Driver = null;
                                         Player.CurrentVehicle = 0;
                                     }
                                     Player.Position = Position;
+                                    Player.Velocity = Velocity;
                                     Player.Heading = PlayerData.Heading;
                                     Player.IsWalking = PlayerData.IsWalking;
                                     Player.IsRunning = PlayerData.IsRunning;
                                     Player.IsJumping = PlayerData.IsJumping;
+                                    Player.IsCrouching = PlayerData.IsCrouching;
+                                    Player.IsGettingIntoVehicle = PlayerData.IsGettingIntoVehicle;
+                                    Player.IsGettingOutOfVehicle = PlayerData.IsGettingOutOfVehicle;
+                                }
+
+                                // Test Player
+
+                                TestPlayer.Name = "TestPlayer";
+                                TestPlayer.Health = PlayerData.Health;
+                                TestPlayer.Armor = PlayerData.Armor;
+                                Position.X = Position.X + 5;
+                                if (PlayerData.CurrentVehicle > 0)
+                                {
+                                    if (PlayerData.CurrentVehicle == 1)
+                                    {
+                                        PlayerData.CurrentVehicle = 2;
+                                    }
+                                    Vehicle Vehicle = VehiclesController.GetByID(PlayerData.CurrentVehicle);
+                                    Vehicle.Position = Position;
+                                    Vehicle.Velocity = Velocity;
+                                    Vehicle.Rotation = Rotation;
+                                    Vehicle.Driver = TestPlayer;
+                                    TestPlayer.CurrentVehicle = PlayerData.CurrentVehicle;
+                                }
+                                else
+                                {
+                                    if (TestPlayer.CurrentVehicle > 0)
+                                    {
+                                        Vehicle Vehicle = VehiclesController.GetByID(TestPlayer.CurrentVehicle);
+                                        Vehicle.Driver = null;
+                                        TestPlayer.CurrentVehicle = 0;
+                                    }
+                                    TestPlayer.Position = Position;
+                                    TestPlayer.Velocity = Velocity;
+                                    TestPlayer.Heading = PlayerData.Heading;
+                                    TestPlayer.IsWalking = PlayerData.IsWalking;
+                                    TestPlayer.IsRunning = PlayerData.IsRunning;
+                                    TestPlayer.IsJumping = PlayerData.IsJumping;
+                                    TestPlayer.IsCrouching = PlayerData.IsCrouching;
+                                    TestPlayer.IsGettingIntoVehicle = PlayerData.IsGettingIntoVehicle;
+                                    TestPlayer.IsGettingOutOfVehicle = PlayerData.IsGettingOutOfVehicle;
                                 }
                                 break;
                             default:
@@ -205,10 +266,16 @@ namespace ivmp_server_core
                 PlayerData.Pos_X = Player.Position.X;
                 PlayerData.Pos_Y = Player.Position.Y;
                 PlayerData.Pos_Z = Player.Position.Z;
+                PlayerData.Vel_X = Player.Velocity.X;
+                PlayerData.Vel_Y = Player.Velocity.Y;
+                PlayerData.Vel_Z = Player.Velocity.Z;
                 PlayerData.Heading = Player.Heading;
                 PlayerData.IsWalking = Player.IsWalking;
                 PlayerData.IsRunning = Player.IsRunning;
                 PlayerData.IsJumping = Player.IsJumping;
+                PlayerData.IsCrouching = Player.IsCrouching;
+                PlayerData.IsGettingIntoVehicle = Player.IsGettingIntoVehicle;
+                PlayerData.IsGettingOutOfVehicle = Player.IsGettingOutOfVehicle;
 
                 Msg.WriteAllFields(PlayerData);
 
@@ -219,7 +286,7 @@ namespace ivmp_server_core
         public void UpdateAllVehicles()
         {
             List<Vehicle> Vehicles = VehiclesController.GetAll();
-            foreach(var Vehicle in Vehicles)
+            foreach (var Vehicle in Vehicles)
             {
                 NetOutgoingMessage Msg = NetServer.CreateMessage();
                 VehicleUpdateStruct VehicleData = new VehicleUpdateStruct();
@@ -228,6 +295,9 @@ namespace ivmp_server_core
                 VehicleData.Pos_X = Vehicle.Position.X;
                 VehicleData.Pos_Y = Vehicle.Position.Y;
                 VehicleData.Pos_Z = Vehicle.Position.Z;
+                VehicleData.Vel_X = Vehicle.Rotation.X;
+                VehicleData.Vel_Y = Vehicle.Rotation.Y;
+                VehicleData.Vel_Z = Vehicle.Rotation.Z;
                 VehicleData.Rot_X = Vehicle.Rotation.X;
                 VehicleData.Rot_Y = Vehicle.Rotation.Y;
                 VehicleData.Rot_Z = Vehicle.Rotation.Z;

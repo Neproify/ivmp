@@ -36,6 +36,7 @@ namespace ivmp_server_core.Scripting
             Engine.SetValue("Vector4", new Func<float, float, float, float, SharpDX.Vector4>((X, Y, Z, W) => { return new SharpDX.Vector4(X, Y, Z, W); }));
             Engine.SetValue("Quaternion", new Func<float, float, float, float, SharpDX.Quaternion>((X, Y, Z, W) => { return new SharpDX.Quaternion(X, Y, Z, W); }));
             Engine.SetValue("Console", ConsoleNatives);
+            Engine.SetValue("Event", new Func<string, Scripting.Natives.Event>((Name) => { return new Scripting.Natives.Event(Name, Server.EventsManager); }));
             Engine.SetValue("Vehicle", new Func<string, SharpDX.Vector3, Scripting.Natives.Vehicle>((Model, Position) => { return new Scripting.Natives.Vehicle(Model, Position, Server.VehiclesController); }));
         }
 

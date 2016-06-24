@@ -24,6 +24,8 @@ namespace ivmp_client_core
         public DateTime Interpolation_End;
         public Vector3 StartPosition;
         public Vector3 EndPosition;
+        public Vector3 StartVelocity;
+        public Vector3 EndVelocity;
         public Quaternion StartRotation;
         public Quaternion EndRotation;
 
@@ -35,13 +37,10 @@ namespace ivmp_client_core
 
         public void SetPosition(Vector3 Position, bool Instant)
         {
+            StartPosition = Vehicle.Position;
             if (Instant == true)
             {
                 StartPosition = Position;
-            }
-            else
-            {
-                StartPosition = EndPosition;
             }
             EndPosition = Position;
         }
@@ -51,43 +50,41 @@ namespace ivmp_client_core
             SetPosition(Position, false);
         }
 
+        public void SetVelocity(Vector3 Velocity)
+        {
+            StartVelocity = Vehicle.Velocity;
+            EndVelocity = Velocity;
+        }
+
         public void SetRotation(Quaternion Rotation)
         {
-            StartRotation = EndRotation;
+            StartRotation = Vehicle.RotationQuaternion;
             EndRotation = Rotation;
         }
 
         public void UpdateInterpolation()
         {
-            // interpolate position
+            // Interpolate position
             if (Vehicle.Exists())
             {
-                bool CancelInterpolation = false;
                 float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
 
-                if (StartPosition.DistanceTo(EndPosition) > 5.0f)
+                if (Vehicle.Position.DistanceTo(EndPosition) > 5.0f)
                 {
-                    SetPosition(EndPosition, true);
+                    Vehicle.Position = EndPosition;
                 }
 
                 Vector3 CurrentPosition;
                 CurrentPosition = Vector3.Lerp(StartPosition, EndPosition, Progress);
 
-                if (EndPosition.DistanceTo(Vehicle.Position) <= 0.01f)
-                {
-                    CancelInterpolation = true;
-                }
+                Vehicle.Position = CurrentPosition;
+                // Interpolate velocity - Fix it later
 
-                if (!CancelInterpolation)
-                {
-                    Vehicle.Position = CurrentPosition;
-                }
-            }
+                //Vector3 CurrentVelocity;
+                //CurrentVelocity = Vector3.Lerp(StartVelocity, EndVelocity, Progress);
 
-            // interpolate rotation
-            if (Vehicle.Exists())
-            {
-                float Progress = ((float)DateTime.Now.Subtract(Interpolation_Start).TotalMilliseconds) / ((float)Interpolation_End.Subtract(Interpolation_Start).TotalMilliseconds);
+                //Vehicle.Velocity = EndVelocity;
+                // Interpolate Rotation
 
                 Quaternion CurrentRotation;
                 CurrentRotation = Quaternion.Lerp(StartRotation, EndRotation, Progress);

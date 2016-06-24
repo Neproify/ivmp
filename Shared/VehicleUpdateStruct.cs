@@ -20,6 +20,10 @@ namespace Shared
         public float Pos_Y;
         public float Pos_Z;
 
+        public float Vel_X;
+        public float Vel_Y;
+        public float Vel_Z;
+
         public float Rot_X;
         public float Rot_Y;
         public float Rot_Z;

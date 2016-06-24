@@ -21,6 +21,8 @@ namespace ivmp_server_core
 
         public SharpDX.Vector3 Position;
 
+        public SharpDX.Vector3 Velocity;
+
         public SharpDX.Quaternion Rotation;
 
         public Vehicle(string Model, SharpDX.Vector3 Position)
@@ -29,6 +31,7 @@ namespace ivmp_server_core
             this.Position = Position;
 
             this.Rotation = SharpDX.Quaternion.Zero;
+            this.Velocity = SharpDX.Vector3.Zero;
         }
     }
 }

@@ -26,6 +26,10 @@ namespace Shared
         public float Pos_Y = 0f;
         public float Pos_Z = 0f;
 
+        public float Vel_X = 0f;
+        public float Vel_Y = 0f;
+        public float Vel_Z = 0f;
+
         public float Rot_X = 0f;
         public float Rot_Y = 0f;
         public float Rot_Z = 0f;
@@ -36,5 +40,8 @@ namespace Shared
         public bool IsWalking = false;
         public bool IsRunning = false;
         public bool IsJumping = false;
+        public bool IsCrouching = false;
+        public bool IsGettingIntoVehicle = false;
+        public bool IsGettingOutOfVehicle = false;
     }
 }
