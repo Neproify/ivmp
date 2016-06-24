@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Entities\PlayersController.cs" />
     <Compile Include="Program.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="Scripting\EventHandler.cs" />
     <Compile Include="Scripting\EventsManager.cs" />
     <Compile Include="Scripting\Natives\ConsoleNatives.cs" />
+    <Compile Include="Scripting\Natives\EntityNatives.cs" />
     <Compile Include="Scripting\Natives\EventNatives.cs" />
     <Compile Include="Scripting\Natives\PlayerNatives.cs" />
     <Compile Include="Scripting\Natives\VehicleNatives.cs" />

@@ -12,18 +12,9 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core
 {
-    public class Vehicle
+    public class Vehicle : Entity
     {
-        public int ID;
-        public string Model;
-
         public Player Driver = null;
-
-        public SharpDX.Vector3 Position;
-
-        public SharpDX.Vector3 Velocity;
-
-        public SharpDX.Quaternion Rotation;
 
         public Vehicle(string Model, SharpDX.Vector3 Position)
         {

@@ -13,11 +13,8 @@ using Lidgren.Network;
 
 namespace ivmp_server_core
 {
-    public class Player
+    public class Player : Entity
     {
-        public Server Server;
-
-        public int ID;
         public NetConnection NetConnection;
 
         public int CurrentVehicle;
@@ -26,12 +23,8 @@ namespace ivmp_server_core
 
         public bool IsSpawned;
 
-        public string Model;
         public int Health;
         public int Armor;
-
-        public SharpDX.Vector3 Position;
-        public SharpDX.Vector3 Velocity;
 
         public float Heading;
 

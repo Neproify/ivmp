@@ -6,30 +6,28 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core.Scripting.Natives
 {
-    public class Player
+    public class Player : EntityNatives
     {
-        public ivmp_server_core.Player ServerPlayer;
-
         public Player(ivmp_server_core.Player ServerPlayer)
         {
-            this.ServerPlayer = ServerPlayer;
+            Entity = ServerPlayer;
         }
 
         public void Spawn(SharpDX.Vector3 Position, float Heading)
         {
             System.Console.WriteLine("SpawnScripting");
-            ServerPlayer.Spawn(Position, Heading);
+            Entity.Spawn(Position, Heading);
         }
 
         public void FadeScreenIn(int Duration)
         {
             System.Console.WriteLine("FadeScreenInScripting");
-            ServerPlayer.FadeScreenIn(Duration);
+            Entity.FadeScreenIn(Duration);
         }
 
         public void FadeScreenOut(int Duration)
         {
-            ServerPlayer.FadeScreenOut(Duration);
+            Entity.FadeScreenOut(Duration);
         }
     }
 }
