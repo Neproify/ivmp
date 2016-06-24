@@ -12,14 +12,19 @@ namespace ivmp_server_core.Scripting.Natives
         public ivmp_server_core.Scripting.Event ServerEvent;
         public EventsManager EventsManager;
 
-        public string Name;
+        public string Name
+        {
+            get
+            {
+                return ServerEvent.Name;
+            }
+        }
 
         public Event(string Name, EventsManager EventsManager)
         {
             this.EventsManager = EventsManager;
             EventsManager.AddEvent(Name);
             ServerEvent = EventsManager.GetEvent(Name);
-            this.Name = Name;
         }
 
         public void AddHandler(Jint.Native.JsValue Function)

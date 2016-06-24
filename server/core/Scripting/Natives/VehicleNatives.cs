@@ -17,6 +17,30 @@ namespace ivmp_server_core.Scripting.Natives
         public ivmp_server_core.Vehicle ServerVehicle;
         public VehiclesController VehiclesController;
 
+        public SharpDX.Vector3 Position
+        {
+            get
+            {
+                return ServerVehicle.Position;
+            }
+            set
+            {
+                ServerVehicle.Position = value;
+            }
+        }
+
+        public SharpDX.Quaternion Rotation
+        {
+            get
+            {
+                return ServerVehicle.Rotation;
+            }
+            set
+            {
+                ServerVehicle.Rotation = value;
+            }
+        }
+
         public Vehicle(string Model, SharpDX.Vector3 Position, VehiclesController VehiclesController)
         {
             ServerVehicle = new ivmp_server_core.Vehicle(Model, Position);
@@ -26,26 +50,6 @@ namespace ivmp_server_core.Scripting.Natives
         public Vehicle(int ID)
         {
             ServerVehicle = VehiclesController.GetByID(ID);
-        }
-
-        public void SetPosition(SharpDX.Vector3 Position)
-        {
-            ServerVehicle.Position = Position;
-        }
-
-        public SharpDX.Vector3 GetPosition()
-        {
-            return ServerVehicle.Position;
-        }
-
-        public void SetRotation(SharpDX.Quaternion Rotation)
-        {
-            ServerVehicle.Rotation = Rotation;
-        }
-
-        public SharpDX.Quaternion GetRotation()
-        {
-            return ServerVehicle.Rotation;
         }
     }
 }
