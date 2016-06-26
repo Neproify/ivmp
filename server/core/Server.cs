@@ -60,10 +60,11 @@ namespace ivmp_server_core
             NetServer = new NetServer(NetConfig);
             NetServer.Start();
             PlayersController = new PlayersController();
-            VehiclesController = new VehiclesController();
+            VehiclesController = new VehiclesController(Instance);
             ResourcesManager = new Scripting.ResourcesManager();
             ResourcesManager.Server = Instance;
             EventsManager = new Scripting.EventsManager();
+            Engine = new Jint.Engine();
 
             // load resources
             foreach (XmlNode Resource in Resources)
@@ -79,8 +80,6 @@ namespace ivmp_server_core
             tick.Start();
             Console.WriteLine("Started game server on Port " + Port);
             Console.WriteLine("Max Players: " + MaxPlayers);
-
-            Engine = new Jint.Engine();
         }
 
         public void CreateTestPlayer()
@@ -144,7 +143,7 @@ namespace ivmp_server_core
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerConnected);
                                     OutMsg.Write(Player.ID);
                                     NetServer.SendToAll(OutMsg, Msg.SenderConnection, NetDeliveryMethod.ReliableUnordered, 1);
-                                    EventsManager.GetEvent("OnPlayerConnect").Trigger(Jint.Native.JsValue.FromObject(Engine, new Scripting.Natives.Player(Player)));
+                                    EventsManager.GetEvent("OnPlayerConnected").Trigger(Jint.Native.JsValue.FromObject(Engine, new Scripting.Natives.Player(Player)));
                                     break;
                                 }
                             case NetConnectionStatus.Disconnected:
@@ -155,7 +154,7 @@ namespace ivmp_server_core
                                     OutMsg.Write((int)Shared.NetworkMessageType.PlayerDisconnected);
                                     OutMsg.Write(Player.ID);
                                     NetServer.SendToAll(OutMsg, Msg.SenderConnection, NetDeliveryMethod.ReliableSequenced, 1);
-                                    EventsManager.GetEvent("OnPlayerDisconnect").Trigger(Jint.Native.JsValue.FromObject(Engine, new Scripting.Natives.Player(Player)));
+                                    EventsManager.GetEvent("OnPlayerDisconnected").Trigger(Jint.Native.JsValue.FromObject(Engine, new Scripting.Natives.Player(Player)));
                                     Player = null;
                                     break;
                                 }
@@ -196,6 +195,7 @@ namespace ivmp_server_core
                                     Vehicle.Velocity = Velocity;
                                     Vehicle.Rotation = Rotation;
                                     Vehicle.Heading = PlayerData.Heading;
+                                    Vehicle.Speed = PlayerData.Speed;
                                     Vehicle.Driver = Player;
                                     Player.CurrentVehicle = PlayerData.CurrentVehicle;
                                 }
@@ -237,6 +237,7 @@ namespace ivmp_server_core
                                         Vehicle.Velocity = Velocity;
                                         Vehicle.Rotation = Rotation;
                                         Vehicle.Heading = PlayerData.Heading;
+                                        Vehicle.Speed = PlayerData.Speed;
                                         Vehicle.Driver = TestPlayer;
                                         TestPlayer.CurrentVehicle = PlayerData.CurrentVehicle;
                                     }
@@ -321,15 +322,16 @@ namespace ivmp_server_core
                 VehicleData.Pos_X = Vehicle.Position.X;
                 VehicleData.Pos_Y = Vehicle.Position.Y;
                 VehicleData.Pos_Z = Vehicle.Position.Z;
-                VehicleData.Vel_X = Vehicle.Rotation.X;
-                VehicleData.Vel_Y = Vehicle.Rotation.Y;
-                VehicleData.Vel_Z = Vehicle.Rotation.Z;
+                VehicleData.Vel_X = Vehicle.Velocity.X;
+                VehicleData.Vel_Y = Vehicle.Velocity.Y;
+                VehicleData.Vel_Z = Vehicle.Velocity.Z;
                 VehicleData.Rot_X = Vehicle.Rotation.X;
                 VehicleData.Rot_Y = Vehicle.Rotation.Y;
                 VehicleData.Rot_Z = Vehicle.Rotation.Z;
                 VehicleData.Rot_A = Vehicle.Rotation.W;
 
                 VehicleData.Heading = Vehicle.Heading;
+                VehicleData.Speed = Vehicle.Speed;
 
                 Msg.Write((int)Shared.NetworkMessageType.UpdateVehicle);
                 Msg.WriteAllFields(VehicleData);

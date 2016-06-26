@@ -30,5 +30,6 @@ namespace Shared
         public float Rot_A;
 
         public float Heading;
+        public float Speed;
     }
 }

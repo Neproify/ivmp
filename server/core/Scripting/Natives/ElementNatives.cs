@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core.Scripting.Natives
 {
-    public class ElementNatives
+    public abstract class ElementNatives<T> where T : Element
     {
-        public dynamic Element;
+        public T Element { get; set; }
 
         public SharpDX.Vector3 Position
         {
@@ -40,6 +40,11 @@ namespace ivmp_server_core.Scripting.Natives
             {
                 Element.Rotation = value;
             }
+        }
+
+        public void Destroy()
+        {
+            Element.Destroy();
         }
     }
 }

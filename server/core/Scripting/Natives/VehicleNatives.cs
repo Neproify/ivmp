@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core.Scripting.Natives
 {
-    public class Vehicle : ElementNatives
+    public class Vehicle : ElementNatives<ivmp_server_core.Vehicle>
     {
         public VehiclesController VehiclesController;
 

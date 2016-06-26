@@ -36,6 +36,7 @@ namespace Shared
         public float Rot_A = 0f;
 
         public float Heading = 0f;
+        public float Speed = 0f;
 
         public bool IsWalking = false;
         public bool IsRunning = false;

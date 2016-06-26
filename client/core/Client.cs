@@ -249,9 +249,9 @@ namespace ivmp_client_core
                                     Position.Z = VehicleData.Pos_Z;
                                     Vehicle.SetPosition(Position);
                                     Vector3 Velocity = new Vector3();
-                                    Velocity.X = VehicleData.Rot_X;
-                                    Velocity.Y = VehicleData.Rot_Y;
-                                    Velocity.Z = VehicleData.Rot_Z;
+                                    Velocity.X = VehicleData.Vel_X;
+                                    Velocity.Y = VehicleData.Vel_Y;
+                                    Velocity.Z = VehicleData.Vel_Z;
                                     Vehicle.SetVelocity(Velocity);
                                     Vehicle.SetHeading(VehicleData.Heading);
                                     Quaternion Rotation = new Quaternion();
@@ -293,13 +293,17 @@ namespace ivmp_client_core
                     PlayerData.Pos_X = CurrentVehicle.Position.X;
                     PlayerData.Pos_Y = CurrentVehicle.Position.Y;
                     PlayerData.Pos_Z = CurrentVehicle.Position.Z;
-                    PlayerData.Vel_X = CurrentVehicle.Velocity.X;
-                    PlayerData.Vel_Y = CurrentVehicle.Velocity.Y;
-                    PlayerData.Vel_Z = CurrentVehicle.Velocity.Z;
+                    Vector3 Velocity = CurrentVehicle.Velocity;
+                    Velocity.Normalize();
+                    PlayerData.Vel_X = Velocity.X;
+                    PlayerData.Vel_Y = Velocity.Y;
+                    PlayerData.Vel_Z = Velocity.Z;
                     PlayerData.Rot_X = CurrentVehicle.RotationQuaternion.X;
                     PlayerData.Rot_Y = CurrentVehicle.RotationQuaternion.Y;
                     PlayerData.Rot_Z = CurrentVehicle.RotationQuaternion.Z;
                     PlayerData.Rot_A = CurrentVehicle.RotationQuaternion.W;
+                    PlayerData.Heading = CurrentVehicle.Heading;
+                    PlayerData.Speed = CurrentVehicle.Speed;
                 }
                 else
                 {

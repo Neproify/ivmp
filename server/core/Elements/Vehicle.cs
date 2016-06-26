@@ -16,6 +16,8 @@ namespace ivmp_server_core
     {
         public Player Driver = null;
 
+        public float Speed;
+
         public Vehicle(string Model, SharpDX.Vector3 Position)
         {
             this.Model = Model;
@@ -24,6 +26,7 @@ namespace ivmp_server_core
             this.Rotation = SharpDX.Quaternion.Zero;
             this.Velocity = SharpDX.Vector3.Zero;
             this.Heading = 0f;
+            this.Speed = 0f;
         }
     }
 }

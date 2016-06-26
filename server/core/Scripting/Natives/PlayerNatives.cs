@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core.Scripting.Natives
 {
-    public class Player : ElementNatives
+    public class Player : ElementNatives<ivmp_server_core.Player>
     {
         public string Name
         {

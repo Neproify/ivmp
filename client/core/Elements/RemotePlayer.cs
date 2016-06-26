@@ -15,6 +15,8 @@ namespace ivmp_client_core
 {
     public class RemotePlayer : Element
     {
+        public Ped GameReference;
+
         public bool Initialized = false;
 
         RemotePlayerAnimationManager AnimationManager;
@@ -38,6 +40,41 @@ namespace ivmp_client_core
             GameReference.PreventRagdoll = true;
             AnimationManager = new RemotePlayerAnimationManager(this);
             Initialized = true;
+        }
+
+        public override void Destroy()
+        {
+            if (GameReference.Exists())
+            {
+                GameReference.Delete();
+            }
+        }
+
+        public override void SetPosition(Vector3 Position, bool Instant)
+        {
+            StartPosition = GameReference.Position;
+            if (Instant == true)
+            {
+                StartPosition = Position;
+            }
+            EndPosition = Position;
+        }
+
+        public override void SetPosition(Vector3 Position)
+        {
+            SetPosition(Position, false);
+        }
+
+        public override void SetVelocity(Vector3 Velocity)
+        {
+            StartVelocity = GameReference.Velocity;
+            EndVelocity = Velocity;
+        }
+
+        public override void SetHeading(float Heading)
+        {
+            StartHeading = GameReference.Heading;
+            EndHeading = Heading;
         }
 
         public void SetHealth(int Health)
