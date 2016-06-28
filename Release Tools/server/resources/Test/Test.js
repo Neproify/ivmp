@@ -8,6 +8,7 @@ function OnResourceStart()
 
 	Console.Print("Gamemode started.");
 }
+
 Event("OnResourceStart").AddHandler(OnResourceStart);
 
 function OnPlayerConnected(Player)
@@ -16,10 +17,21 @@ function OnPlayerConnected(Player)
 	Player.Spawn(Vector3(2783.87, 426.42, 5.82), 45.0);
 	Player.FadeScreenIn(1000);
 }
-Event("OnPlayerConnect").AddHandler(OnPlayerConnected);
+
+Event("OnPlayerConnected").AddHandler(OnPlayerConnected);
 
 function OnPlayerDisconnected(Player)
 {
 	Console.Print("Player disconnected.");
 }
-Event("OnPlayerDisconnect").AddHandler(OnPlayerDisconnected);
+Event("OnPlayerDisconnected").AddHandler(OnPlayerDisconnected);
+
+function OnElementCreated(Element)
+{
+}
+Event("OnElementCreated").AddHandler(OnElementCreated)
+
+function OnElementDestroyed(Element)
+{
+}
+Event("OnElementDestroyed").AddHandler(OnElementDestroyed);
