@@ -129,6 +129,7 @@ namespace ivmp_client_core
                                 RemoteVehiclesController = new RemoteVehiclesController();
                                 IsSpawned = false;
                                 Game.FadeScreenOut(1);
+                                Game.LocalPlayer.Model = "F_Y_SWAT";
                                 Initialized = true;
                                 break;
                             case NetConnectionStatus.Disconnected:
@@ -166,7 +167,7 @@ namespace ivmp_client_core
                                     RemotePlayer Player = RemotePlayersController.GetByID(PlayerData.ID);
                                     if(Player == null)
                                     {
-                                        Player = new RemotePlayer();
+                                        Player = new RemotePlayer(PlayerData.Model);
                                         Player.ID = PlayerData.ID;
                                         RemotePlayersController.Add(Player);
                                     }
@@ -197,6 +198,10 @@ namespace ivmp_client_core
                                         Player.SetHeading(PlayerData.Heading);
                                         Player.IsWalking = PlayerData.IsWalking;
                                         Player.IsRunning = PlayerData.IsRunning;
+                                        if (!Player.IsJumping && PlayerData.IsJumping == true)
+                                        {
+                                            Player.TaskJumpAdded = false;
+                                        }
                                         Player.IsJumping = PlayerData.IsJumping;
                                         Player.IsCrouching = PlayerData.IsCrouching;
 
@@ -321,7 +326,7 @@ namespace ivmp_client_core
                         Game.isGameKeyPressed(GameKey.MoveRight);
                     PlayerData.IsRunning = Game.isGameKeyPressed(GameKey.Sprint);
                     PlayerData.IsJumping = Game.isGameKeyPressed(GameKey.Jump);
-                    PlayerData.IsCrouching = Game.isGameKeyPressed(GameKey.Crouch);
+                    PlayerData.IsCrouching = GTA.Native.Function.Call<bool>("IS_CHAR_DUCKING", Game.LocalPlayer.Character);
                 }
                 OutMsg.Write((int)NetworkMessageType.UpdatePlayer);
                 OutMsg.WriteAllFields(PlayerData);

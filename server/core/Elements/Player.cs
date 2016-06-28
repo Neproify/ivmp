@@ -33,6 +33,11 @@ namespace ivmp_server_core
         public bool IsGettingIntoVehicle;
         public bool IsGettingOutOfVehicle;
 
+        public Player()
+        {
+            Type = "Player";
+        }
+
         public void Spawn(SharpDX.Vector3 Position, float Heading)
         {
             NetOutgoingMessage Msg = Server.NetServer.CreateMessage();

@@ -26,13 +26,18 @@ namespace ivmp_server_core.Scripting.Natives
 
         public Vehicle(string Model, SharpDX.Vector3 Position, VehiclesController VehiclesController)
         {
-            Element = new ivmp_server_core.Vehicle(Model, Position);
+            Element = new ivmp_server_core.Vehicle(Model, Position, VehiclesController.Server);
             VehiclesController.Add(Element);
         }
 
         public Vehicle(int ID)
         {
             Element = VehiclesController.GetByID(ID);
+        }
+
+        public Vehicle(ivmp_server_core.Vehicle Element)
+        {
+            this.Element = Element;
         }
     }
 }

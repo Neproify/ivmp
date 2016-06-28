@@ -42,6 +42,14 @@ namespace ivmp_server_core.Scripting.Natives
             }
         }
 
+        public string Type
+        {
+            get
+            {
+                return Element.Type;
+            }
+        }
+
         public void Destroy()
         {
             Element.Destroy();

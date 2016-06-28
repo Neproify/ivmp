@@ -18,7 +18,7 @@ namespace ivmp_server_core
 
         public float Speed;
 
-        public Vehicle(string Model, SharpDX.Vector3 Position)
+        public Vehicle(string Model, SharpDX.Vector3 Position, ivmp_server_core.Server ServerInstance)
         {
             this.Model = Model;
             this.Position = Position;
@@ -27,6 +27,14 @@ namespace ivmp_server_core
             this.Velocity = SharpDX.Vector3.Zero;
             this.Heading = 0f;
             this.Speed = 0f;
+            Type = "Vehicle";
+            Server = ServerInstance;
+            Server.EventsManager.GetEvent("OnElementCreated").Trigger(Jint.Native.JsValue.FromObject(Server.Engine, new Scripting.Natives.Vehicle(this)));
+        }
+
+        public new void Destroy()
+        {
+            Server.EventsManager.GetEvent("OnElementDestroyed").Trigger(Jint.Native.JsValue.FromObject(Server.Engine, new Scripting.Natives.Vehicle(this)));
         }
     }
 }

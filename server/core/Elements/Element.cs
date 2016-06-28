@@ -23,8 +23,11 @@ namespace ivmp_server_core
 
         public float Heading;
 
+        public string Type;
+
         public Element()
         {
+            Type = "Element";
             //Server.EventsManager.GetEvent("OnElementCreated").Trigger(Jint.Native.JsValue.FromObject(Server.Engine, new Scripting.Natives.ElementNatives().Element = this));
         }
 

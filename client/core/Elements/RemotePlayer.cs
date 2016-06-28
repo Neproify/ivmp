@@ -31,14 +31,17 @@ namespace ivmp_client_core
         public bool IsGettingIntoVehicle;
         public bool IsGettingOutOfVehicle;
 
-        public RemotePlayer()
+        public bool TaskJumpAdded;
+
+        public RemotePlayer(string Model)
         {
-            GameReference = World.CreatePed(Vector3.Zero);
+            GameReference = World.CreatePed(GTA.Model.FromString(Model), Vector3.Zero);
             GameReference.BlockGestures = true;
             GameReference.BlockPermanentEvents = true;
             GameReference.BlockWeaponSwitching = true;
             GameReference.PreventRagdoll = true;
             AnimationManager = new RemotePlayerAnimationManager(this);
+            TaskJumpAdded = false;
             Initialized = true;
         }
 
@@ -162,12 +165,49 @@ namespace ivmp_client_core
                 bool AnimationPlayed = false;
                 if (!GameReference.isInVehicle())
                 {
-                    if (IsCrouching == true && !AnimationPlayed)
+                    if (IsCrouching == true)
                     {
-                        AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Crouch);
+                        if (!GTA.Native.Function.Call<bool>("IS_CHAR_DUCKING", GameReference))
+                        {
+                            GameReference.Task.ClearAllImmediately();
+                            GTA.Native.Function.Call("SET_CHAR_DUCKING", GameReference, true);
+                        }
                         AnimationPlayed = true;
                     }
-                    if (IsJumping == true && !AnimationPlayed)
+                    else
+                    {
+                        if (GTA.Native.Function.Call<bool>("IS_CHAR_DUCKING", GameReference))
+                        {
+                            GTA.Native.Function.Call("SET_CHAR_DUCKING", GameReference, false);
+                        }
+                    }
+
+                    if(IsJumping == true && !TaskJumpAdded)
+                    {
+                        TaskJumpAdded = true;
+                        GTA.Native.Function.Call("TASK_JUMP", GameReference, 1);
+                        AnimationPlayed = true;
+                    }
+
+                    if (!AnimationPlayed)
+                    {
+                        if (IsWalking == true)
+                        {
+                            if (IsRunning == true)
+                            {
+                                AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Run);
+                            }
+                            else
+                            {
+                                AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Walk);
+                            }
+                        }
+                        else
+                        {
+                            AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.StandStill);
+                        }
+                    }
+                    /*if (IsJumping == true && !AnimationPlayed)
                     {
                         AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.Jump);
                         AnimationPlayed = true;
@@ -186,7 +226,7 @@ namespace ivmp_client_core
                     {
                         AnimationManager.PlayAnimation(Shared.RemotePlayerAnimations.StandStill);
                         AnimationPlayed = true;
-                    }
+                    }*/
                 }
             }
         }
