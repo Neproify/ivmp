@@ -16,11 +16,13 @@ namespace Shared
 
         public string Name = "Player";
 
-        public string Model = "F_Y_SWAT"; // only when sending to client
+        public string Model = "M_Y_SWAT"; // only when sending to client
         public int Health = 0;
         public int Armor = 0;
 
         public int CurrentVehicle = 0;
+
+        public int VehicleSeat = -3;
 
         public float Pos_X = 0f;
         public float Pos_Y = 0f;

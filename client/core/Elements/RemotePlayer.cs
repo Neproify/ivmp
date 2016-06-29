@@ -23,6 +23,7 @@ namespace ivmp_client_core
 
         public string Name;
         public RemoteVehicle CurrentVehicle;
+        public VehicleSeat CurrentSeat;
 
         public bool IsWalking;
         public bool IsRunning;
@@ -35,7 +36,7 @@ namespace ivmp_client_core
 
         public RemotePlayer(string Model)
         {
-            GameReference = World.CreatePed(GTA.Model.FromString(Model), Vector3.Zero);
+            GameReference = World.CreatePed(Model, Vector3.Zero);
             GameReference.BlockGestures = true;
             GameReference.BlockPermanentEvents = true;
             GameReference.BlockWeaponSwitching = true;
@@ -152,7 +153,7 @@ namespace ivmp_client_core
             {
                 if (CurrentVehicle != null && !GameReference.isInVehicle(CurrentVehicle.GameReference))
                 {
-                    GameReference.WarpIntoVehicle(CurrentVehicle.GameReference, VehicleSeat.Driver);
+                    GameReference.WarpIntoVehicle(CurrentVehicle.GameReference, CurrentSeat);
                 }
                 else if (CurrentVehicle == null)
                 {

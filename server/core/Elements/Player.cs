@@ -18,6 +18,7 @@ namespace ivmp_server_core
         public NetConnection NetConnection;
 
         public int CurrentVehicle;
+        public int VehicleSeat;
 
         public string Name;
 
@@ -36,6 +37,7 @@ namespace ivmp_server_core
         public Player()
         {
             Type = "Player";
+            Model = "M_Y_SWAT";
         }
 
         public void Spawn(SharpDX.Vector3 Position, float Heading)

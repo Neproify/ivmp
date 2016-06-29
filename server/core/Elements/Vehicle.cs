@@ -12,6 +12,15 @@ using System.Threading.Tasks;
 
 namespace ivmp_server_core
 {
+    public enum VehicleSeat
+    {
+        None = -3,
+        Driver = -1,
+        RightFront = 0,
+        LeftRear = 1,
+        RightRear = 2
+    }
+
     public class Vehicle : Element
     {
         public Player Driver = null;

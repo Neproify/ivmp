@@ -177,6 +177,7 @@ namespace ivmp_client_core
                                     if (PlayerData.CurrentVehicle > 0)
                                     {
                                         Player.CurrentVehicle = RemoteVehiclesController.GetByID(PlayerData.CurrentVehicle);
+                                        Player.CurrentSeat = (VehicleSeat)PlayerData.VehicleSeat;
                                         Player.Update();
                                     }
                                     else
@@ -295,6 +296,24 @@ namespace ivmp_client_core
                 {
                     Vehicle CurrentVehicle = Game.LocalPlayer.Character.CurrentVehicle;
                     PlayerData.CurrentVehicle = RemoteVehiclesController.GetByGame(CurrentVehicle).ID;
+                    VehicleSeat CurrentSeat = VehicleSeat.None;
+                    if (CurrentVehicle.GetPedOnSeat(VehicleSeat.Driver) == Game.LocalPlayer.Character)
+                    {
+                        CurrentSeat = VehicleSeat.Driver;
+                    }
+                    else if (CurrentVehicle.GetPedOnSeat(VehicleSeat.RightFront) == Game.LocalPlayer.Character)
+                    {
+                        CurrentSeat = VehicleSeat.RightFront;
+                    }
+                    else if (CurrentVehicle.GetPedOnSeat(VehicleSeat.LeftRear) == Game.LocalPlayer.Character)
+                    {
+                        CurrentSeat = VehicleSeat.LeftRear;
+                    }
+                    else if (CurrentVehicle.GetPedOnSeat(VehicleSeat.RightRear) == Game.LocalPlayer.Character)
+                    {
+                        CurrentSeat = VehicleSeat.RightRear;
+                    }
+                    PlayerData.VehicleSeat = (int)CurrentSeat;
                     PlayerData.Pos_X = CurrentVehicle.Position.X;
                     PlayerData.Pos_Y = CurrentVehicle.Position.Y;
                     PlayerData.Pos_Z = CurrentVehicle.Position.Z;
@@ -338,6 +357,17 @@ namespace ivmp_client_core
         {
             switch(e.Key)
             {
+                case Keys.G:
+                    Vehicle NearestVehicle = World.GetClosestVehicle(Game.LocalPlayer.Character.Position, 10.0f);
+                    if(NearestVehicle != null && NearestVehicle.Exists())
+                    {
+                        VehicleSeat FreeSeat = NearestVehicle.GetFreePassengerSeat();
+                        if(FreeSeat != VehicleSeat.None)
+                        {
+                            Game.LocalPlayer.Character.Task.EnterVehicle(NearestVehicle, FreeSeat);
+                        }
+                    }
+                    break;
                 default:
                     break;
             }

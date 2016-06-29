@@ -198,6 +198,7 @@ namespace ivmp_server_core
                                     Vehicle.Speed = PlayerData.Speed;
                                     Vehicle.Driver = Player;
                                     Player.CurrentVehicle = PlayerData.CurrentVehicle;
+                                    Player.VehicleSeat = PlayerData.VehicleSeat;
                                 }
                                 else
                                 {
@@ -240,6 +241,7 @@ namespace ivmp_server_core
                                         Vehicle.Speed = PlayerData.Speed;
                                         Vehicle.Driver = TestPlayer;
                                         TestPlayer.CurrentVehicle = PlayerData.CurrentVehicle;
+                                        TestPlayer.VehicleSeat = PlayerData.VehicleSeat;
                                     }
                                     else
                                     {
@@ -290,6 +292,7 @@ namespace ivmp_server_core
                 PlayerData.Health = Player.Health;
                 PlayerData.Armor = Player.Armor;
                 PlayerData.CurrentVehicle = Player.CurrentVehicle;
+                PlayerData.VehicleSeat = Player.VehicleSeat;
                 PlayerData.Pos_X = Player.Position.X;
                 PlayerData.Pos_Y = Player.Position.Y;
                 PlayerData.Pos_Z = Player.Position.Z;
