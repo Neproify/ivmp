@@ -1,2 +1,2 @@
 language: csharp
-solution: ivmp.sln
+solution: ivmp_linux.sln
