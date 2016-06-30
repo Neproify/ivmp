@@ -30,23 +30,23 @@ namespace ivmp_server_core.Scripting
             if (!System.IO.Directory.Exists(Directory))
             {
                 Console.WriteLine("Resource directory(" + Name + ") not found.");
-                return;
+                throw new Exception("Resource directory not found.");
             }
-            if (!System.IO.File.Exists(Directory + "/Meta.xml"))
+            if (!System.IO.File.Exists(Directory + "/meta.xml"))
             {
-                Console.WriteLine("Cannot find Meta.xml in resource " + Name);
-                return;
+                Console.WriteLine("Cannot find meta.xml in resource " + Name);
+                throw new Exception("Cannot find meta.xml");
             }
             XmlDocument Meta = new XmlDocument();
             Meta.Load(Directory + "/meta.xml");
-            XmlNodeList ScriptsToLoad = Meta.DocumentElement.SelectNodes("/Meta/Script");
+            XmlNodeList ScriptsToLoad = Meta.DocumentElement.SelectNodes("/meta/script");
             foreach(XmlNode ScriptToLoad in ScriptsToLoad)
             {
-                string ScriptName = ScriptToLoad.Attributes["Src"].InnerText;
+                string ScriptName = ScriptToLoad.Attributes["src"].InnerText;
                 if(!System.IO.File.Exists(Directory + "/" + ScriptName))
                 {
                     Console.WriteLine("Cannot find " + ScriptName + "in resource " + Name);
-                    return;
+                    throw new Exception("Cannot find script.");
                 }
                 Script Script = new Script();
                 Script.Server = Server;

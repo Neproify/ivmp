@@ -47,9 +47,9 @@ namespace ivmp_server_core
             }
             XmlDocument Config = new XmlDocument();
             Config.Load("serverconfig.xml");
-            Port = int.Parse(Config.DocumentElement.SelectSingleNode("/Config/ServerPort").InnerText);
-            MaxPlayers = int.Parse(Config.DocumentElement.SelectSingleNode("/Config/MaxPlayers").InnerText);
-            XmlNodeList Resources = Config.DocumentElement.SelectNodes("/Config/Resource");
+            Port = int.Parse(Config.DocumentElement.SelectSingleNode("/config/serverport").InnerText);
+            MaxPlayers = int.Parse(Config.DocumentElement.SelectSingleNode("/config/maxplayers").InnerText);
+            XmlNodeList Resources = Config.DocumentElement.SelectNodes("/config/resource");
 
             NetPeerConfiguration NetConfig = new NetPeerConfiguration("ivmp");
             NetConfig.MaximumConnections = MaxPlayers;
@@ -69,8 +69,14 @@ namespace ivmp_server_core
             // load resources
             foreach (XmlNode Resource in Resources)
             {
-                ResourcesManager.Load(Resource.Attributes["Name"].InnerText);
-                ResourcesManager.Start(Resource.Attributes["Name"].InnerText);
+                try
+                {
+                    ResourcesManager.Load(Resource.Attributes["name"].InnerText);
+                    ResourcesManager.Start(Resource.Attributes["name"].InnerText);
+                }
+                catch(Exception)
+                {
+                }
             }
 
             Timer tick = new Timer();

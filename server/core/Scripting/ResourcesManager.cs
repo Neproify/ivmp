@@ -27,7 +27,14 @@ namespace ivmp_server_core.Scripting
             Resource Resource = new Resource();
             Resource.Name = Name;
             Resource.Server = Server;
-            Resource.Load();
+            try
+            {
+                Resource.Load();
+            }
+            catch(Exception)
+            {
+                throw new Exception("Error when loading resource");
+            }
             Resources.Add(Resource);
             Console.WriteLine("Loading resource " + Name);
         }
