@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SharpDX;
 
 namespace ivmp_server_core
 {
@@ -27,7 +28,7 @@ namespace ivmp_server_core
 
         public float Speed;
 
-        public Vehicle(string Model, SharpDX.Vector3 Position, ivmp_server_core.Server ServerInstance)
+        public Vehicle(string Model, Vector3 Position)
         {
             this.Model = Model;
             this.Position = Position;
@@ -37,7 +38,6 @@ namespace ivmp_server_core
             this.Heading = 0f;
             this.Speed = 0f;
             Type = "Vehicle";
-            Server = ServerInstance;
             Server.EventsManager.GetEvent("OnElementCreated").Trigger(Jint.Native.JsValue.FromObject(Server.Engine, new Scripting.Natives.Vehicle(this)));
         }
 

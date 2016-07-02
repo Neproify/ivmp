@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ivmp_server_core.Scripting.Natives
+namespace Shared.Scripting.Natives
 {
     public class Console
     {

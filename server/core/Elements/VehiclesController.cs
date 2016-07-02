@@ -16,12 +16,9 @@ namespace ivmp_server_core
     {
         List<Vehicle> Vehicles;
 
-        public Server Server;
-
-        public VehiclesController(Server Server)
+        public VehiclesController()
         {
             Vehicles = new List<Vehicle>();
-            this.Server = Server;
         }
 
         public void Add(Vehicle Vehicle)
@@ -37,7 +34,6 @@ namespace ivmp_server_core
                 FreeID = Veh.ID + 1;
             }
             Vehicle.ID = FreeID;
-            Vehicle.Server = Server;
             Vehicles.Add(Vehicle);
         }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ivmp_server_core.Scripting
+namespace Shared.Scripting
 {
     public class Event
     {

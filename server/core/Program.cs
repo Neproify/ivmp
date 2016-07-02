@@ -20,7 +20,7 @@ namespace ivmp_server_core
         public static void Main(string[] args)
         {
             Console.WriteLine("Starting IV:MP server... Type \"shutdown\" to stop.");
-            var Server = new Server();
+            Server.Initialize();
             while(Running == true)
             {
                 Input = Console.ReadLine();

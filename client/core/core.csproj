@@ -26,7 +26,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,6 +35,14 @@
     <Reference Include="Lidgren.Network, Version=2012.1.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\bin\Lidgren.Network.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Vendor\SharpDX\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Vendor\SharpDX\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -57,6 +65,10 @@
     <Compile Include="Elements\RemoteVehiclesController.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Jint\Jint.csproj">
+      <Project>{678738da-f723-4920-b9e5-cad667104bda}</Project>
+      <Name>Jint</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScriptHookDotNet\ScriptHookDotNet.vcxproj">
       <Project>{5dd209ac-1b5f-483a-bca9-150cad228c5a}</Project>
       <Name>ScriptHookDotNet</Name>

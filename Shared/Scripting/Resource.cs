@@ -11,17 +11,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace ivmp_server_core.Scripting
+namespace Shared.Scripting
 {
     public class Resource
     {
-        public Server Server;
+        //public Server Server;
         public string Name;
-        public List<Script> Scripts;
+#if SERVER
+        public List<ivmp_server_core.Scripting.ServerScript> Scripts;
+#endif
 
         public Resource()
         {
-            Scripts = new List<Script>();
+#if SERVER
+            Scripts = new List<ivmp_server_core.Scripting.ServerScript>();
+#endif
         }
 
         public void Load()
@@ -48,8 +52,9 @@ namespace ivmp_server_core.Scripting
                     Console.WriteLine("Cannot find " + ScriptName + "in resource " + Name);
                     throw new Exception("Cannot find script.");
                 }
-                Script Script = new Script();
-                Script.Server = Server;
+#if SERVER
+                ivmp_server_core.Scripting.ServerScript Script = new ivmp_server_core.Scripting.ServerScript();
+#endif
                 Script.Name = ScriptName;
                 Script.Set(System.IO.File.ReadAllText(Directory + "/" + ScriptName));
                 Scripts.Add(Script);
@@ -61,7 +66,9 @@ namespace ivmp_server_core.Scripting
             foreach(var Script in Scripts)
             {
                 Script.Execute();
-                Server.EventsManager.GetEvent("OnResourceStart").Trigger();
+#if SERVER
+                ivmp_server_core.Server.EventsManager.GetEvent("OnResourceStart").Trigger();
+#endif
             }
         }
     }

@@ -4,22 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Jint;
+using SharpDX;
 
 namespace ivmp_server_core
 {
     public class Element
     {
-        public Server Server;
-
         public int ID;
 
         public string Model;
 
-        public SharpDX.Vector3 Position;
+        public Vector3 Position;
 
-        public SharpDX.Vector3 Velocity;
+        public Vector3 Velocity;
 
-        public SharpDX.Quaternion Rotation;
+        public Quaternion Rotation;
 
         public float Heading;
 

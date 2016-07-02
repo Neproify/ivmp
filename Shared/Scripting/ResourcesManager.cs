@@ -10,11 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ivmp_server_core.Scripting
+namespace Shared.Scripting
 {
     public class ResourcesManager
     {
-        public Server Server;
         public List<Resource> Resources;
 
         public ResourcesManager()
@@ -26,7 +25,6 @@ namespace ivmp_server_core.Scripting
         {
             Resource Resource = new Resource();
             Resource.Name = Name;
-            Resource.Server = Server;
             try
             {
                 Resource.Load();

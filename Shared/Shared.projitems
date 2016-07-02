@@ -12,6 +12,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Animations.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkMessageTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlayerUpdateStruct.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scripting\Event.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scripting\EventHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scripting\EventsManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scripting\Natives\ConsoleNatives.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scripting\Natives\EventNatives.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scripting\Resource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scripting\ResourcesManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Scripting\Script.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VehicleUpdateStruct.cs" />
   </ItemGroup>

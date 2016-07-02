@@ -15,29 +15,28 @@ using System.Net.Sockets;
 using System.Timers;
 using Lidgren.Network;
 using Shared;
+using SharpDX;
 
 namespace ivmp_server_core
 {
-    public class Server
+    public static class Server
     {
-        public Server Instance;
-        public int Port;
-        public int TickRate;
-        public int MaxPlayers;
+        public static int Port;
+        public static int TickRate;
+        public static int MaxPlayers;
 
-        public NetServer NetServer;
-        public PlayersController PlayersController;
-        public VehiclesController VehiclesController;
-        public Scripting.ResourcesManager ResourcesManager;
-        public Scripting.EventsManager EventsManager;
+        public static NetServer NetServer;
+        public static PlayersController PlayersController;
+        public static VehiclesController VehiclesController;
+        public static Shared.Scripting.ResourcesManager ResourcesManager;
+        public static Shared.Scripting.EventsManager EventsManager;
 
-        public Jint.Engine Engine;
+        public static Jint.Engine Engine;
 
-        public Player TestPlayer;
+        public static Player TestPlayer;
 
-        public Server()
+        public static void Initialize()
         {
-            Instance = this;
             TickRate = Shared.Settings.TickRate;
             if (!System.IO.File.Exists("serverconfig.xml"))
             {
@@ -60,10 +59,10 @@ namespace ivmp_server_core
             NetServer = new NetServer(NetConfig);
             NetServer.Start();
             PlayersController = new PlayersController();
-            VehiclesController = new VehiclesController(Instance);
-            ResourcesManager = new Scripting.ResourcesManager();
-            ResourcesManager.Server = Instance;
-            EventsManager = new Scripting.EventsManager();
+            VehiclesController = new VehiclesController();
+            ResourcesManager = new Shared.Scripting.ResourcesManager();
+            //ResourcesManager.Server = Instance;
+            EventsManager = new Shared.Scripting.EventsManager();
             Engine = new Jint.Engine();
 
             // load resources
@@ -88,20 +87,19 @@ namespace ivmp_server_core
             Console.WriteLine("Max Players: " + MaxPlayers);
         }
 
-        public void CreateTestPlayer()
+        public static void CreateTestPlayer()
         {
             if (TestPlayer == null)
             {
                 TestPlayer = new Player();
                 TestPlayer.Name = "TestPlayer";
-                TestPlayer.Server = this;
                 PlayersController.Add(TestPlayer);
 
                 Console.WriteLine("Created test player. ID: " + TestPlayer.ID);
             }
         }
 
-        public void RemoveTestPlayer()
+        public static void RemoveTestPlayer()
         {
             if (TestPlayer != null)
             {
@@ -117,7 +115,7 @@ namespace ivmp_server_core
             }
         }
 
-        public void OnTick(object sender, ElapsedEventArgs e)
+        public static void OnTick(object sender, ElapsedEventArgs e)
         {
             NetIncomingMessage Msg;
             while ((Msg = NetServer.ReadMessage()) != null)
@@ -142,7 +140,6 @@ namespace ivmp_server_core
                             case NetConnectionStatus.Connected:
                                 {
                                     Player Player = new Player();
-                                    Player.Server = this;
                                     Player.NetConnection = Msg.SenderConnection;
                                     PlayersController.Add(Player);
                                     NetOutgoingMessage OutMsg = NetServer.CreateMessage();
@@ -181,15 +178,15 @@ namespace ivmp_server_core
                                 Player.Name = PlayerData.Name;
                                 Player.Health = PlayerData.Health;
                                 Player.Armor = PlayerData.Armor;
-                                SharpDX.Vector3 Position = new SharpDX.Vector3();
+                                Vector3 Position = new Vector3();
                                 Position.X = PlayerData.Pos_X;
                                 Position.Y = PlayerData.Pos_Y;
                                 Position.Z = PlayerData.Pos_Z;
-                                SharpDX.Vector3 Velocity = new SharpDX.Vector3();
+                                Vector3 Velocity = new Vector3();
                                 Velocity.X = PlayerData.Vel_X;
                                 Velocity.Y = PlayerData.Vel_Y;
                                 Velocity.Z = PlayerData.Vel_Z;
-                                SharpDX.Quaternion Rotation = new SharpDX.Quaternion();
+                                Quaternion Rotation = new Quaternion();
                                 Rotation.X = PlayerData.Rot_X;
                                 Rotation.Y = PlayerData.Rot_Y;
                                 Rotation.Z = PlayerData.Rot_Z;
@@ -284,7 +281,7 @@ namespace ivmp_server_core
             UpdateAllVehicles();
         }
 
-        public void UpdateAllPlayers()
+        public static void UpdateAllPlayers()
         {
             List<Player> Players = PlayersController.GetAll();
             foreach (var Player in Players)
@@ -319,7 +316,7 @@ namespace ivmp_server_core
             }
         }
 
-        public void UpdateAllVehicles()
+        public static void UpdateAllVehicles()
         {
             List<Vehicle> Vehicles = VehiclesController.GetAll();
             foreach (var Vehicle in Vehicles)
@@ -356,7 +353,7 @@ namespace ivmp_server_core
             }
         }
 
-        public void Shutdown()
+        public static void Shutdown()
         {
             NetServer.Shutdown("Shutdown");
         }
