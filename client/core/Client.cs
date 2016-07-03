@@ -16,49 +16,51 @@ using Shared;
 
 namespace ivmp_client_core
 {
-    public class Client : Script
+    public static class Client
     {
-        public Client Instance;
-        public NetClient NetClient;
+        public static NetClient NetClient;
 
-        public string PlayerName;
-        public RemotePlayersController RemotePlayersController;
-        public RemoteVehiclesController RemoteVehiclesController;
+        public static Core Core;
 
-        public bool IsSpawned;
+        public static string PlayerName;
+        public static RemotePlayersController RemotePlayersController;
+        public static RemoteVehiclesController RemoteVehiclesController;
+        public static Shared.Scripting.ResourcesManager ResourcesManager;
+        public static Shared.Scripting.EventsManager EventsManager;
 
-        public bool Initialized = false;
+        public static bool IsSpawned;
 
-        public Client()
+        public static bool Initialized = false;
+
+        public static void Initialize()
         {
-            Instance = this;
-            Interval = Shared.Settings.TickRate;
-            KeyDown += new GTA.KeyEventHandler(OnKeyDown);
-            Tick += new EventHandler(OnTick);
-            PerFrameDrawing += new GraphicsEventHandler(OnFrameRender);
+            Core.SetInterval(Shared.Settings.TickRate);
+            Core.KeyDown += new GTA.KeyEventHandler(OnKeyDown);
+            Core.Tick += new EventHandler(OnTick);
+            Core.PerFrameDrawing += new GraphicsEventHandler(OnFrameRender);
             PlayerName = "Player";
             NetPeerConfiguration Config = new NetPeerConfiguration("ivmp");
             Config.AutoFlushSendQueue = true;
             Config.ConnectionTimeout = 30;
             NetClient = new NetClient(Config);
             NetClient.Start();
-            BindConsoleCommand("connect", ConnectCommand);
-            BindConsoleCommand("disconnect", DisconnectCommand);
+            Core.AddConsoleCommand("connect", ConnectCommand);
+            Core.AddConsoleCommand("disconnect", DisconnectCommand);
         }
 
-        public void ConnectCommand(ParameterCollection Parameter)
+        public static void ConnectCommand(ParameterCollection Parameter)
         {
             Connect(Parameter[0], Parameter.ToInteger(1));
         }
 
-        public void DisconnectCommand(ParameterCollection Parameter)
+        public static void DisconnectCommand(ParameterCollection Parameter)
         {
             Disconnect();
         }
 
-        public void Connect(string IP, int port)
+        public static void Connect(string IP, int port)
         {
-            if(NetClient.ConnectionStatus == NetConnectionStatus.Connected)
+            if (NetClient.ConnectionStatus == NetConnectionStatus.Connected)
             {
                 Disconnect();
             }
@@ -67,7 +69,7 @@ namespace ivmp_client_core
             NetClient.Connect(IP, port, Msg);
         }
 
-        public void Disconnect()
+        public static void Disconnect()
         {
             NetClient.Disconnect("Quit");
             RemotePlayersController = null;
@@ -75,22 +77,22 @@ namespace ivmp_client_core
             Initialized = false;
         }
 
-        public void OnTick(object sender, EventArgs e)
+        public static void OnTick(object sender, EventArgs e)
         {
-            if(NetClient == null)
+            if (NetClient == null)
             {
                 return;
             }
 
             NetIncomingMessage Msg;
 
-            while((Msg = NetClient.ReadMessage()) != null)
+            while ((Msg = NetClient.ReadMessage()) != null)
             {
-                switch(Msg.MessageType)
+                switch (Msg.MessageType)
                 {
                     case NetIncomingMessageType.StatusChanged:
                         NetConnectionStatus status = (NetConnectionStatus)Msg.ReadByte();
-                        switch(status)
+                        switch (status)
                         {
                             case NetConnectionStatus.InitiatedConnect:
                                 Game.Console.Print("Connecting to server.");
@@ -107,7 +109,7 @@ namespace ivmp_client_core
                                 Game.LocalPlayer.Character.PreventRagdoll = true;
                                 Game.LocalPlayer.Character.WillFlyThroughWindscreen = false;
                                 Ped[] Peds = World.GetAllPeds();
-                                foreach(var Ped in Peds)
+                                foreach (var Ped in Peds)
                                 {
                                     if (Ped.Exists())
                                     {
@@ -118,7 +120,7 @@ namespace ivmp_client_core
                                     }
                                 }
                                 Vehicle[] Vehicles = World.GetAllVehicles();
-                                foreach(var Vehicle in Vehicles)
+                                foreach (var Vehicle in Vehicles)
                                 {
                                     if (Vehicle.Exists())
                                     {
@@ -127,6 +129,8 @@ namespace ivmp_client_core
                                 }
                                 RemotePlayersController = new RemotePlayersController();
                                 RemoteVehiclesController = new RemoteVehiclesController();
+                                ResourcesManager = new Shared.Scripting.ResourcesManager();
+                                EventsManager = new Shared.Scripting.EventsManager();
                                 IsSpawned = false;
                                 Game.FadeScreenOut(1);
                                 Game.LocalPlayer.Model = "F_Y_SWAT";
@@ -165,7 +169,7 @@ namespace ivmp_client_core
                                     PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();
                                     Msg.ReadAllFields(PlayerData);
                                     RemotePlayer Player = RemotePlayersController.GetByID(PlayerData.ID);
-                                    if(Player == null)
+                                    if (Player == null)
                                     {
                                         Player = new RemotePlayer(PlayerData.Model);
                                         Player.ID = PlayerData.ID;
@@ -182,7 +186,7 @@ namespace ivmp_client_core
                                     }
                                     else
                                     {
-                                        if(Player.CurrentVehicle != null)
+                                        if (Player.CurrentVehicle != null)
                                         {
                                             Player.CurrentVehicle = null;
                                         }
@@ -242,7 +246,7 @@ namespace ivmp_client_core
                                     Msg.ReadAllFields(VehicleData);
 
                                     RemoteVehicle Vehicle = RemoteVehiclesController.GetByID(VehicleData.ID);
-                                    if(Vehicle == null)
+                                    if (Vehicle == null)
                                     {
                                         Vehicle = new RemoteVehicle(VehicleData.Model);
                                         Vehicle.ID = VehicleData.ID;
@@ -289,7 +293,7 @@ namespace ivmp_client_core
                 Vector3 PlayerPos = Game.LocalPlayer.Character.Position;
                 Vector3 PlayerRot = Game.LocalPlayer.Character.Direction;
                 float PlayerHeading = Game.LocalPlayer.Character.Heading;
-                PlayerData.Name = Name;
+                PlayerData.Name = PlayerName;
                 PlayerData.Health = Game.LocalPlayer.Character.Health;
                 PlayerData.Armor = Game.LocalPlayer.Character.Armor;
                 if (Game.LocalPlayer.Character.isInVehicle())
@@ -353,16 +357,16 @@ namespace ivmp_client_core
             }
         }
 
-        public void OnKeyDown(object sender, GTA.KeyEventArgs e)
+        public static void OnKeyDown(object sender, GTA.KeyEventArgs e)
         {
-            switch(e.Key)
+            switch (e.Key)
             {
                 case Keys.G:
                     Vehicle NearestVehicle = World.GetClosestVehicle(Game.LocalPlayer.Character.Position, 10.0f);
-                    if(NearestVehicle != null && NearestVehicle.Exists())
+                    if (NearestVehicle != null && NearestVehicle.Exists())
                     {
                         VehicleSeat FreeSeat = NearestVehicle.GetFreePassengerSeat();
-                        if(FreeSeat != VehicleSeat.None)
+                        if (FreeSeat != VehicleSeat.None)
                         {
                             Game.LocalPlayer.Character.Task.EnterVehicle(NearestVehicle, FreeSeat);
                         }
@@ -373,18 +377,18 @@ namespace ivmp_client_core
             }
         }
 
-        public void OnFrameRender(object sender, GraphicsEventArgs e)
+        public static void OnFrameRender(object sender, GraphicsEventArgs e)
         {
-            if(Initialized && NetClient.ConnectionStatus == NetConnectionStatus.Connected)
+            if (Initialized && NetClient.ConnectionStatus == NetConnectionStatus.Connected)
             {
                 List<RemotePlayer> Players = RemotePlayersController.Players;
-                foreach(var Player in Players)
+                foreach (var Player in Players)
                 {
                     Player.UpdateInterpolation();
                 }
 
                 List<RemoteVehicle> Vehicles = RemoteVehiclesController.Vehicles;
-                foreach(var Vehicle in Vehicles)
+                foreach (var Vehicle in Vehicles)
                 {
                     bool CancelThisVehicleUpdate = false;
                     if (Game.LocalPlayer.Character.isInVehicle())

@@ -61,7 +61,6 @@ namespace ivmp_server_core
             PlayersController = new PlayersController();
             VehiclesController = new VehiclesController();
             ResourcesManager = new Shared.Scripting.ResourcesManager();
-            //ResourcesManager.Server = Instance;
             EventsManager = new Shared.Scripting.EventsManager();
             Engine = new Jint.Engine();
 

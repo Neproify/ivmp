@@ -20,11 +20,17 @@ namespace Shared.Scripting
 #if SERVER
         public List<ivmp_server_core.Scripting.ServerScript> Scripts;
 #endif
+#if CLIENT
+        public List<ivmp_client_core.Scripting.ClientScript> Scripts;
+#endif
 
         public Resource()
         {
 #if SERVER
             Scripts = new List<ivmp_server_core.Scripting.ServerScript>();
+#endif
+#if CLIENT
+            Scripts = new List<ivmp_client_core.Scripting.ClientScript>();
 #endif
         }
 
@@ -54,6 +60,9 @@ namespace Shared.Scripting
                 }
 #if SERVER
                 ivmp_server_core.Scripting.ServerScript Script = new ivmp_server_core.Scripting.ServerScript();
+#endif
+#if CLIENT
+                ivmp_client_core.Scripting.ClientScript Script = new ivmp_client_core.Scripting.ClientScript();
 #endif
                 Script.Name = ScriptName;
                 Script.Set(System.IO.File.ReadAllText(Directory + "/" + ScriptName));
