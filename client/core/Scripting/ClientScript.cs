@@ -8,5 +8,8 @@ namespace ivmp_client_core.Scripting
 {
     public class ClientScript : Shared.Scripting.Script
     {
+        public ClientScript()
+        {
+        }
     }
 }

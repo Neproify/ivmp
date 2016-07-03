@@ -164,6 +164,32 @@ namespace ivmp_client_core
                                     }
                                     break;
                                 }
+                            case (int)Shared.NetworkMessageType.LoadResource:
+                                {
+                                    string ResourceName = Msg.ReadString();
+                                    Shared.Scripting.Resource Resource = new Shared.Scripting.Resource();
+                                    Resource.Name = ResourceName;
+                                    ResourcesManager.Resources.Add(Resource);
+                                    break;
+                                }
+                            case (int)Shared.NetworkMessageType.StartResource:
+                                {
+                                    string ResourceName = Msg.ReadString();
+                                    Shared.Scripting.Resource Resource = ResourcesManager.GetByName(ResourceName);
+                                    if(Resource != null)
+                                    {
+                                        Resource.Start();
+                                    }
+                                    break;
+                                }
+                            case (int)Shared.NetworkMessageType.ResourceFile:
+                                {
+                                    string ResourceName = Msg.ReadString();
+                                    string ScriptName = Msg.ReadString();
+                                    string ScriptCode = Msg.ReadString();
+                                    ResourcesManager.GetByName(ResourceName).AddScript(ScriptName, ScriptCode);
+                                    break;
+                                }
                             case (int)Shared.NetworkMessageType.UpdatePlayer:
                                 {
                                     PlayerUpdateStruct PlayerData = new PlayerUpdateStruct();

@@ -14,6 +14,9 @@ namespace Shared
     {
         PlayerConnected,
         PlayerDisconnected,
+        LoadResource,
+        StartResource,
+        ResourceFile,
         UpdatePlayer,
         SpawnPlayer,
         FadeScreenIn,

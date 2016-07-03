@@ -146,6 +146,10 @@ namespace ivmp_server_core
                                     OutMsg.Write(Player.ID);
                                     NetServer.SendToAll(OutMsg, Msg.SenderConnection, NetDeliveryMethod.ReliableUnordered, 1);
                                     EventsManager.GetEvent("OnPlayerConnected").Trigger(Jint.Native.JsValue.FromObject(Engine, new Scripting.Natives.Player(Player)));
+                                    foreach(var Resource in ResourcesManager.Resources)
+                                    {
+                                        Resource.SendToClient(Player.NetConnection);
+                                    }
                                     break;
                                 }
                             case NetConnectionStatus.Disconnected:

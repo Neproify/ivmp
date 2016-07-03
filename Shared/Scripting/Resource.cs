@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Lidgren.Network;
 
 namespace Shared.Scripting
 {
@@ -17,6 +18,7 @@ namespace Shared.Scripting
     {
         //public Server Server;
         public string Name;
+        public bool IsStarted;
 #if SERVER
         public List<ivmp_server_core.Scripting.ServerScript> Scripts;
 #endif
@@ -34,8 +36,58 @@ namespace Shared.Scripting
 #endif
         }
 
+#if SERVER
+        public void AddScript(string ScriptName, string ScriptCode, string Type)
+#endif
+#if CLIENT
+        public void AddScript(string ScriptName, string ScriptCode)
+#endif
+        {
+#if SERVER
+            ivmp_server_core.Scripting.ServerScript Script = new ivmp_server_core.Scripting.ServerScript();
+#endif
+#if CLIENT
+            ivmp_client_core.Scripting.ClientScript Script = new ivmp_client_core.Scripting.ClientScript();
+#endif
+            Script.Name = ScriptName;
+            Script.Set(ScriptCode);
+#if SERVER
+            Script.Type = Type;
+#endif
+            Scripts.Add(Script);
+        }
+
+#if SERVER
+        public void SendToClient(NetConnection Connection)
+        {
+            NetOutgoingMessage msg = ivmp_server_core.Server.NetServer.CreateMessage();
+            msg.Write((int)NetworkMessageType.LoadResource);
+            msg.Write(Name);
+            ivmp_server_core.Server.NetServer.SendMessage(msg, Connection, NetDeliveryMethod.ReliableOrdered);
+            foreach (var Script in Scripts)
+            {
+                if (Script.Type != "client")
+                    continue;
+                msg = ivmp_server_core.Server.NetServer.CreateMessage();
+                msg.Write((int)NetworkMessageType.ResourceFile);
+                msg.Write(Name);
+                msg.Write(Script.Name);
+                msg.Write(Script.Code);
+                ivmp_server_core.Server.NetServer.SendMessage(msg, Connection, NetDeliveryMethod.ReliableOrdered);
+            }
+            if(IsStarted)
+            {
+                msg = ivmp_server_core.Server.NetServer.CreateMessage();
+                msg.Write((int)NetworkMessageType.StartResource);
+                msg.Write(Name);
+                ivmp_server_core.Server.NetServer.SendMessage(msg, Connection, NetDeliveryMethod.ReliableOrdered);
+            }
+        }
+#endif
+
         public void Load()
         {
+#if SERVER
             string Directory = "resources/" + Name;
             if (!System.IO.Directory.Exists(Directory))
             {
@@ -53,32 +105,32 @@ namespace Shared.Scripting
             foreach(XmlNode ScriptToLoad in ScriptsToLoad)
             {
                 string ScriptName = ScriptToLoad.Attributes["src"].InnerText;
+                string ScriptType = ScriptToLoad.Attributes["type"].InnerText;
                 if(!System.IO.File.Exists(Directory + "/" + ScriptName))
                 {
                     Console.WriteLine("Cannot find " + ScriptName + "in resource " + Name);
                     throw new Exception("Cannot find script.");
                 }
-#if SERVER
-                ivmp_server_core.Scripting.ServerScript Script = new ivmp_server_core.Scripting.ServerScript();
-#endif
-#if CLIENT
-                ivmp_client_core.Scripting.ClientScript Script = new ivmp_client_core.Scripting.ClientScript();
-#endif
-                Script.Name = ScriptName;
-                Script.Set(System.IO.File.ReadAllText(Directory + "/" + ScriptName));
-                Scripts.Add(Script);
+                string ScriptCode = System.IO.File.ReadAllText(Directory + "/" + ScriptName);
+                AddScript(ScriptName, ScriptCode, ScriptType);
             }
+#endif
         }
 
         public void Start()
         {
             foreach(var Script in Scripts)
             {
-                Script.Execute();
 #if SERVER
-                ivmp_server_core.Server.EventsManager.GetEvent("OnResourceStart").Trigger();
+                if (Script.Type != "server")
+                    continue;
 #endif
+                Script.Execute();
             }
+#if SERVER
+            ivmp_server_core.Server.EventsManager.GetEvent("OnResourceStart").Trigger();
+#endif
+            IsStarted = true;
         }
     }
 }

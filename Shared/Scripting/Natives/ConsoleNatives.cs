@@ -20,7 +20,12 @@ namespace Shared.Scripting.Natives
 
         public void Print(string Text)
         {
+#if SERVER
             System.Console.WriteLine(Text);
+#endif
+#if CLIENT
+            GTA.Game.Console.Print(Text);
+#endif
         }
     }
 }

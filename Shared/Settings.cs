@@ -12,7 +12,7 @@ namespace Shared
 {
     public static class Settings
     {
-        public static int NetworkVersion = 0x2;
+        public static int NetworkVersion = 0x3;
         public static int MaxPlayers = 32;
         public static int TickRate = 50;
     }

@@ -1,3 +1,4 @@
 <meta>
-	<script src="test.js" />
+	<script src="test.js" type="server" />
+	<script src="test_c.js" type="client" />
 </meta>

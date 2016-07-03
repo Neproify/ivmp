@@ -29,10 +29,18 @@ namespace Shared.Scripting
                 typeof(Vector3).Assembly,
                 typeof(Vector4).Assembly,
                 typeof(Quaternion).Assembly));
+#if SERVER
             Engine.SetValue("Vector2", new Func<float, float, Vector2>((X, Y) => { return new Vector2(X, Y); }));
             Engine.SetValue("Vector3", new Func<float, float, float, Vector3>((X, Y, Z) => { return new Vector3(X, Y, Z); }));
             Engine.SetValue("Vector4", new Func<float, float, float, float, Vector4>((X, Y, Z, W) => { return new Vector4(X, Y, Z, W); }));
             Engine.SetValue("Quaternion", new Func<float, float, float, float, Quaternion>((X, Y, Z, W) => { return new Quaternion(X, Y, Z, W); }));
+#endif
+#if CLIENT
+            Engine.SetValue("Vector2", new Func<float, float, GTA.Vector2>((X, Y) => { return new GTA.Vector2(X, Y); }));
+            Engine.SetValue("Vector3", new Func<float, float, float, GTA.Vector3>((X, Y, Z) => { return new GTA.Vector3(X, Y, Z); }));
+            Engine.SetValue("Vector4", new Func<float, float, float, float, GTA.Vector4>((X, Y, Z, W) => { return new GTA.Vector4(X, Y, Z, W); }));
+            Engine.SetValue("Quaternion", new Func<float, float, float, float, GTA.Quaternion>((X, Y, Z, W) => { return new GTA.Quaternion(X, Y, Z, W); }));
+#endif
             Engine.SetValue("Console", ConsoleNatives);
             Engine.SetValue("Event", new Func<string, Scripting.Natives.EventNatives>((Name) => { return new Scripting.Natives.EventNatives(Name); }));
         }
