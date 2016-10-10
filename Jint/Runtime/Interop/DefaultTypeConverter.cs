@@ -95,7 +95,7 @@ namespace Jint.Runtime.Interop
                                                     @vars),
                                                 jsValueToObject), Expression.Empty());
 
-                        return Expression.Lambda(callExpresion, new ReadOnlyCollection<ParameterExpression>(@params));
+                        return Expression.Lambda(callExpresion, new ReadOnlyCollection<ParameterExpression>(@params)).Compile();
                     }
                     else if (genericType.Name.StartsWith("Func"))
                     {
@@ -133,7 +133,7 @@ namespace Jint.Runtime.Interop
                                                         ),                            
                                                     returnType);
 
-                        return Expression.Lambda(callExpresion, new ReadOnlyCollection<ParameterExpression>(@params));
+                        return Expression.Lambda(callExpresion, new ReadOnlyCollection<ParameterExpression>(@params)).Compile();
                     }
                 }
                 else
@@ -165,7 +165,7 @@ namespace Jint.Runtime.Interop
 
                         var dynamicExpression = Expression.Invoke(Expression.Lambda(callExpression, new ReadOnlyCollection<ParameterExpression>(@params)), new ReadOnlyCollection<ParameterExpression>(@params));
 
-                        return Expression.Lambda(type, dynamicExpression, new ReadOnlyCollection<ParameterExpression>(@params));
+                        return Expression.Lambda(type, dynamicExpression, new ReadOnlyCollection<ParameterExpression>(@params)).Compile();
                     }
                 }
 
@@ -183,6 +183,9 @@ namespace Jint.Runtime.Interop
                 itemsConverted.CopyTo(result, 0);
                 return result;
             }
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition()==typeof(Nullable<>))
+                type = Nullable.GetUnderlyingType(type);
 
             return System.Convert.ChangeType(value, type, formatProvider);
         }
